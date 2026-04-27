@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../data/problemes_data.dart';
+import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/bq_colors.dart';
 
@@ -17,6 +18,7 @@ class ProblemeSchemaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String themeId = ThemeService.instance.preset.id;
     return AspectRatio(
       aspectRatio: 1.6,
       child: Container(
@@ -32,7 +34,9 @@ class ProblemeSchemaView extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             Positioned.fill(
-              child: CustomPaint(painter: _SchemaPainter(schema: schema)),
+              child: CustomPaint(
+                painter: _SchemaPainter(schema: schema, themeId: themeId),
+              ),
             ),
             if (emoji != null)
               Positioned(
@@ -48,21 +52,23 @@ class ProblemeSchemaView extends StatelessWidget {
 }
 
 class _SchemaPainter extends CustomPainter {
-  _SchemaPainter({required this.schema});
+  _SchemaPainter({required this.schema, required this.themeId});
 
   final ProblemeSchema schema;
+  final String themeId;
 
-  static final Paint _stroke = Paint()
+  // Getters non-statiques : recréés à chaque paint pour suivre le thème.
+  Paint get _stroke => Paint()
     ..color = Bq.accentDeep
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2.5
     ..strokeJoin = StrokeJoin.round;
 
-  static final Paint _fill = Paint()
+  Paint get _fill => Paint()
     ..color = Bq.cardBg.withValues(alpha: 0.6)
     ..style = PaintingStyle.fill;
 
-  static final Paint _dashed = Paint()
+  Paint get _dashed => Paint()
     ..color = Bq.accent.withValues(alpha: 0.5)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1.5;
@@ -96,7 +102,8 @@ class _SchemaPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _SchemaPainter old) => old.schema != schema;
+  bool shouldRepaint(covariant _SchemaPainter old) =>
+      old.schema != schema || old.themeId != themeId;
 
   // --- helpers ---
 

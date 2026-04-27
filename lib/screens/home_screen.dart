@@ -699,9 +699,14 @@ class _GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemePreset theme = ThemeService.instance.preset;
+    final Color textColor = theme.isDark ? Colors.white : AppColors.plumDark;
     final List<Color> gradient = featured
-        ? const <Color>[Color(0xFFB8A8FF), Color(0xFF9B7FE8)]
-        : const <Color>[AppColors.lavender200, AppColors.lavender100];
+        ? theme.statsGradient
+        : <Color>[
+            theme.cardBg,
+            Color.lerp(theme.cardBg, theme.accent, 0.10)!,
+          ];
     return Transform.rotate(
       angle: rotation,
       child: Material(
@@ -720,12 +725,12 @@ class _GameCard extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: theme.cardBorder.withValues(alpha: 0.85),
                 width: 2,
               ),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: AppColors.violet
+                  color: theme.accent
                       .withValues(alpha: featured ? 0.28 : 0.16),
                   blurRadius: featured ? 18 : 10,
                   offset: const Offset(0, 6),
@@ -755,7 +760,7 @@ class _GameCard extends StatelessWidget {
                         style: GoogleFonts.quicksand(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.plumDark,
+                          color: textColor,
                         ),
                       ),
                       Text(
@@ -763,7 +768,7 @@ class _GameCard extends StatelessWidget {
                         style: GoogleFonts.quicksand(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.plumDark.withValues(alpha: 0.75),
+                          color: textColor.withValues(alpha: 0.75),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -781,7 +786,7 @@ class _GameCard extends StatelessWidget {
                               child: Text(
                                 t,
                                 style: AppText.tag.copyWith(
-                                  color: AppColors.plumDark,
+                                  color: textColor,
                                 ),
                               ),
                             ),
@@ -835,15 +840,10 @@ class _SparkleTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemePreset theme = ThemeService.instance.preset;
     return ShaderMask(
-      shaderCallback: (Rect rect) => const LinearGradient(
-        colors: <Color>[
-          AppColors.violetDeep,
-          AppColors.violet,
-          AppColors.danger,
-          AppColors.violet,
-        ],
-      ).createShader(rect),
+      shaderCallback: (Rect rect) =>
+          LinearGradient(colors: theme.titleGradient).createShader(rect),
       child: Text(
         text,
         style: GoogleFonts.quicksand(

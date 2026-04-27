@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../theme/app_theme.dart';
+import '../services/theme_service.dart';
+import '../theme/theme_preset.dart';
 
-/// Bouton pilule blanc translucide — utilisé pour la nav (← retour, etc.).
+/// Bouton pilule — couleur dérivée du ThemePreset courant pour qu'un
+/// changement de thème impacte aussi les boutons.
 class PillButton extends StatelessWidget {
   const PillButton({
     super.key,
@@ -18,8 +20,9 @@ class PillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemePreset theme = ThemeService.instance.preset;
     return Material(
-      color: AppColors.glass,
+      color: theme.pillBg,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
@@ -31,7 +34,7 @@ class PillButton extends StatelessWidget {
             style: GoogleFonts.quicksand(
               fontSize: 14,
               fontWeight: FontWeight.w900,
-              color: color ?? AppColors.violet,
+              color: color ?? theme.pillFg,
             ),
           ),
         ),

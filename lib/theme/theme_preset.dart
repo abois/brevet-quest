@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Une palette de fond + accents pour Brevet Quest.
-/// Garde une base cohérente (lavandes, violet d'accent) et fait varier
-/// les gradients de fond + la carte de stats pour un effet visuel net.
+/// Une palette complète pour Brevet Quest. Le `bgGradient` est l'arrière-plan,
+/// mais aussi les couleurs des cartes, des pills, du `_SparkleTitle` et des
+/// sparkles ✦ — pour qu'un changement de thème transforme vraiment l'UI.
 class ThemePreset {
   const ThemePreset({
     required this.id,
@@ -13,6 +13,14 @@ class ThemePreset {
     required this.statsGradient,
     required this.accent,
     required this.accentDeep,
+    required this.cardBg,
+    required this.cardBorder,
+    required this.pillBg,
+    required this.pillFg,
+    required this.titleGradient,
+    required this.sparkleColor,
+    required this.textOnBg,
+    this.unlockLevel = 0,
     this.isDark = false,
   });
 
@@ -24,9 +32,23 @@ class ThemePreset {
   final List<Color> statsGradient;
   final Color accent;
   final Color accentDeep;
+  final Color cardBg;
+  final Color cardBorder;
+  final Color pillBg;
+  final Color pillFg;
+  final List<Color> titleGradient;
+  final Color sparkleColor;
+
+  /// Couleur du texte principal sur le fond du thème (foncé pour les
+  /// thèmes clairs, clair pour le thème dark).
+  final Color textOnBg;
+
+  /// Niveau XP requis pour débloquer le thème (0 = offert d'emblée).
+  final int unlockLevel;
+
   final bool isDark;
 
-  /// Violet Y2K — palette d'origine.
+  /// Violet Y2K — palette d'origine, offerte d'emblée.
   static const ThemePreset violet = ThemePreset(
     id: 'violet',
     name: 'Violet Y2K',
@@ -48,9 +70,22 @@ class ThemePreset {
     statsGradient: <Color>[Color(0xFFB8A8FF), Color(0xFF9B7FE8)],
     accent: Color(0xFF7B2D8F),
     accentDeep: Color(0xFF4A1860),
+    cardBg: Color(0xF2FFFFFF),
+    cardBorder: Color(0xFFFFFFFF),
+    pillBg: Color(0xD9FFFFFF),
+    pillFg: Color(0xFF7B2D8F),
+    titleGradient: <Color>[
+      Color(0xFF4A1860),
+      Color(0xFF7B2D8F),
+      Color(0xFFE83E8C),
+      Color(0xFF7B2D8F),
+    ],
+    sparkleColor: Color(0xFFFFFFFF),
+    textOnBg: Color(0xFF2D1538),
+    unlockLevel: 0,
   );
 
-  /// Rose néon — pour le côté pop & y2k.
+  /// Rose néon — débloqué niveau 5.
   static const ThemePreset rose = ThemePreset(
     id: 'rose',
     name: 'Rose Néon',
@@ -72,9 +107,22 @@ class ThemePreset {
     statsGradient: <Color>[Color(0xFFFF9CC9), Color(0xFFE83E8C)],
     accent: Color(0xFFE83E8C),
     accentDeep: Color(0xFF8C1F4F),
+    cardBg: Color(0xF2FFFFFF),
+    cardBorder: Color(0xFFFFFFFF),
+    pillBg: Color(0xD9FFFFFF),
+    pillFg: Color(0xFFE83E8C),
+    titleGradient: <Color>[
+      Color(0xFF8C1F4F),
+      Color(0xFFE83E8C),
+      Color(0xFFFFB6D9),
+      Color(0xFFE83E8C),
+    ],
+    sparkleColor: Color(0xFFFFFFFF),
+    textOnBg: Color(0xFF3A0F22),
+    unlockLevel: 5,
   );
 
-  /// Mint — fraîcheur & étude détendue.
+  /// Mint — débloqué niveau 10.
   static const ThemePreset mint = ThemePreset(
     id: 'mint',
     name: 'Mint',
@@ -96,9 +144,22 @@ class ThemePreset {
     statsGradient: <Color>[Color(0xFF8AD9B8), Color(0xFF4A9B7E)],
     accent: Color(0xFF1F8A66),
     accentDeep: Color(0xFF0F4A36),
+    cardBg: Color(0xF2FFFFFF),
+    cardBorder: Color(0xFFFFFFFF),
+    pillBg: Color(0xD9FFFFFF),
+    pillFg: Color(0xFF1F8A66),
+    titleGradient: <Color>[
+      Color(0xFF0F4A36),
+      Color(0xFF1F8A66),
+      Color(0xFF7BD9A0),
+      Color(0xFF1F8A66),
+    ],
+    sparkleColor: Color(0xFFFFFFFF),
+    textOnBg: Color(0xFF0E2A1F),
+    unlockLevel: 10,
   );
 
-  /// Dark mode — concentration tardive.
+  /// Dark mode — débloqué niveau 15.
   static const ThemePreset dark = ThemePreset(
     id: 'dark',
     name: 'Dark',
@@ -120,6 +181,19 @@ class ThemePreset {
     statsGradient: <Color>[Color(0xFF7B2D8F), Color(0xFFB8A8FF)],
     accent: Color(0xFFB8A8FF),
     accentDeep: Color(0xFF7B2D8F),
+    cardBg: Color(0xCC2D1538),
+    cardBorder: Color(0xFFB8A8FF),
+    pillBg: Color(0xCC1F0E2A),
+    pillFg: Color(0xFFB8A8FF),
+    titleGradient: <Color>[
+      Color(0xFFB8A8FF),
+      Color(0xFFFFFFFF),
+      Color(0xFFFFD466),
+      Color(0xFFFFFFFF),
+    ],
+    sparkleColor: Color(0xFFFFD466),
+    textOnBg: Color(0xFFF6F0FF),
+    unlockLevel: 15,
     isDark: true,
   );
 
@@ -131,4 +205,6 @@ class ThemePreset {
     }
     return violet;
   }
+
+  bool isUnlocked(int userLevel) => userLevel >= unlockLevel;
 }

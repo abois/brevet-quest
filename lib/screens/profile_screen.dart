@@ -333,15 +333,18 @@ class _ThemeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemePreset current = ThemeService.instance.preset;
+    final int level = ProgressService.instance.progress.level;
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 10,
+      runSpacing: 10,
+      alignment: WrapAlignment.start,
       children: <Widget>[
         for (final ThemePreset p in ThemePreset.all)
           _ThemeChip(
             key: ValueKey<String>('theme-${p.id}'),
             preset: p,
             selected: current.id == p.id,
+            unlocked: p.isUnlocked(level),
             onTap: () {
               HapticFeedback.selectionClick();
               ThemeService.instance.setPreset(p);
@@ -404,58 +407,102 @@ class _ThemeChip extends StatelessWidget {
     super.key,
     required this.preset,
     required this.selected,
+    required this.unlocked,
     required this.onTap,
   });
 
   final ThemePreset preset;
   final bool selected;
+  final bool unlocked;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
+    final Color textColor =
+        preset.isDark ? Colors.white : AppColors.plumDark;
+    return Opacity(
+      opacity: unlocked ? 1.0 : 0.55,
+      child: Material(
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(18),
-        onTap: onTap,
-        child: Container(
-          width: 100,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            gradient: preset.bgGradient,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: selected ? Colors.white : Colors.white.withValues(alpha: 0.5),
-              width: selected ? 3 : 1.5,
-            ),
-            boxShadow: selected
-                ? <BoxShadow>[
-                    BoxShadow(
-                      color: preset.accent.withValues(alpha: 0.4),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Column(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: onTap,
+          child: Stack(
+            clipBehavior: Clip.none,
             children: <Widget>[
-              Text(preset.emoji, style: const TextStyle(fontSize: 22)),
-              const SizedBox(height: 2),
-              Text(
-                preset.name,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.quicksand(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  color: preset.isDark ? Colors.white : AppColors.plumDark,
+              Container(
+                width: 104,
+                height: 104,
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                decoration: BoxDecoration(
+                  gradient: preset.bgGradient,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: selected
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: 0.55),
+                    width: selected ? 3 : 1.5,
+                  ),
+                  boxShadow: selected
+                      ? <BoxShadow>[
+                          BoxShadow(
+                            color: preset.accent.withValues(alpha: 0.45),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(preset.emoji, style: const TextStyle(fontSize: 26)),
+                    const SizedBox(height: 4),
+                    Text(
+                      preset.name,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.quicksand(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    SizedBox(
+                      height: 14,
+                      child: selected
+                          ? const Text('✓',
+                              style: TextStyle(fontSize: 13))
+                          : (unlocked
+                              ? const SizedBox.shrink()
+                              : Text(
+                                  'N${preset.unlockLevel}',
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    color: textColor,
+                                  ),
+                                )),
+                    ),
+                  ],
                 ),
               ),
-              if (selected) ...<Widget>[
-                const SizedBox(height: 4),
-                const Text('✓', style: TextStyle(fontSize: 14)),
-              ],
+              if (!unlocked)
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.lock, size: 12),
+                  ),
+                ),
             ],
           ),
         ),

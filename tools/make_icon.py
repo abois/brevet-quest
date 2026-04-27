@@ -62,12 +62,13 @@ def rounded_mask(size: int, radius: int) -> Image.Image:
 
 
 def make_bg(size: int) -> Image.Image:
-    """Dégradé diagonal lavande → lavande plus saturé (comme app_theme.bgGradient)."""
+    """Dégradé diagonal lavande clair → violet plus saturé pour faire
+    ressortir le BQ avec gradient (sinon trop pâle sur fond clair)."""
     img = Image.new("RGB", (size, size), LAVENDER)
     px = img.load()
-    c1 = (233, 213, 255)   # #E9D5FF — lavande très clair
-    c2 = (217, 194, 255)   # #D9C2FF
-    c3 = (184, 168, 255)   # #B8A8FF — lavande300
+    c1 = (217, 194, 255)   # #D9C2FF — lavande clair
+    c2 = (184, 168, 255)   # #B8A8FF — lavande300
+    c3 = (155, 127, 232)   # #9B7FE8 — lavande400 (plus saturé)
     for y in range(size):
         for x in range(size):
             t = (x + y) / (2 * size)
@@ -105,7 +106,8 @@ def make_horizontal_gradient(size: int, colors: list[tuple[int, int, int]]) -> I
 
 
 def draw_sparkle(draw, cx, cy, sz, color, alpha=255, rot=0.0):
-    """Étoile à 4 branches ✦."""
+    """Étoile à 4 branches ✦. `color` peut être un tuple RGB ou un int
+    (mode 'L' grayscale) ; dans ce cas `alpha` est ignoré."""
     pts_v = [(cx, cy - sz), (cx + sz * 0.18, cy),
              (cx, cy + sz), (cx - sz * 0.18, cy)]
     pts_h = [(cx - sz, cy), (cx, cy - sz * 0.18),
@@ -122,40 +124,65 @@ def draw_sparkle(draw, cx, cy, sz, color, alpha=255, rot=0.0):
 
         pts_v = rot_pts(pts_v)
         pts_h = rot_pts(pts_h)
-    fill = (*color, alpha)
+    if isinstance(color, int):
+        fill = color
+    else:
+        fill = (*color, alpha)
     draw.polygon(pts_v, fill=fill)
     draw.polygon(pts_h, fill=fill)
 
 
-def draw_bq_with_gradient(img: Image.Image, cx: int, cy: int, font_size: int):
-    """Texte 'BQ' avec gradient horizontal violetDeep → violet → rose → violet,
-    façon _SparkleTitle de la home."""
-    text = "BQ"
-    font = quicksand(font_size)
-    bbox = font.getbbox(text)
+def draw_bq_with_gradient(img: Image.Image, cx: int, cy: int, font_size: int,
+                           with_side_sparkles: bool = False,
+                           sparkle_font_size: int | None = None,
+                           gap: int = 40):
+    """Rend "✦ BQ ✦" avec gradient horizontal violetDeep → violet → rose
+    → violet, exactement comme _SparkleTitle de la home. BQ est en
+    Quicksand ; les ✦ (U+2726) sont rendus dans la fonte qui supporte
+    le glyphe (DejaVuSans-Bold)."""
+    bq = "BQ"
+    font_bq = quicksand(font_size)
+    bbox = font_bq.getbbox(bq)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
     tx = cx - tw // 2 - bbox[0]
     ty = cy - th // 2 - bbox[1]
 
-    # Ombre douce derrière
-    shadow = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    sd = ImageDraw.Draw(shadow)
-    sd.text((tx + 6, ty + 12), text, font=font, fill=(*PLUM_DARK, 180))
-    shadow = shadow.filter(ImageFilter.GaussianBlur(10))
-    img.alpha_composite(shadow)
+    star = "✦"
+    sparkle_font = None
+    sw = 0
+    if with_side_sparkles:
+        sf_size = sparkle_font_size or int(font_size * 0.55)
+        sparkle_font = ImageFont.truetype(
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", sf_size
+        )
+        sb = sparkle_font.getbbox(star)
+        sw = sb[2] - sb[0]
 
-    # Mask alpha du texte (en blanc sur noir)
+    # Mask alpha contenant tout le titre
     mask = Image.new("L", img.size, 0)
     md = ImageDraw.Draw(mask)
-    md.text((tx, ty), text, font=font, fill=255)
+    md.text((tx, ty), bq, font=font_bq, fill=255)
+    if with_side_sparkles and sparkle_font is not None:
+        sb = sparkle_font.getbbox(star)
+        s_th = sb[3] - sb[1]
+        sty = cy - s_th // 2 - sb[1]
+        # ✦ gauche
+        sx_left = tx - gap - sw - sb[0]
+        md.text((sx_left, sty), star, font=sparkle_font, fill=255)
+        # ✦ droit
+        sx_right = tx + tw + gap - sb[0]
+        md.text((sx_right, sty), star, font=sparkle_font, fill=255)
 
-    # Gradient horizontal violetDeep → violet → rose → violet
+    # Ombre douce
+    shadow_mask = mask.filter(ImageFilter.GaussianBlur(10))
+    shadow = Image.new("RGBA", img.size, (*PLUM_DARK, 180))
+    img.paste(shadow, (6, 12), shadow_mask)
+
+    # Gradient horizontal appliqué via le mask
     grad = make_horizontal_gradient(
         img.size[0], [VIOLET_DEEP, VIOLET, DANGER, VIOLET]
     ).convert("RGBA")
-
-    # Compose : ne garde que le gradient là où le mask est > 0
     img.paste(grad, (0, 0), mask)
 
 
@@ -163,26 +190,15 @@ def render(size: int, with_mask: bool) -> Image.Image:
     bg = make_bg(size).convert("RGBA")
     img = bg.copy()
 
-    # Sparkles décoratifs ✦ blancs autour, comme dans la home
-    deco = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    dd = ImageDraw.Draw(deco)
-    sparkles = [
-        (int(size * 0.16), int(size * 0.20), int(size * 0.05), 0),
-        (int(size * 0.84), int(size * 0.18), int(size * 0.04), 0.3),
-        (int(size * 0.10), int(size * 0.50), int(size * 0.035), 0.1),
-        (int(size * 0.90), int(size * 0.50), int(size * 0.04), -0.2),
-        (int(size * 0.18), int(size * 0.82), int(size * 0.045), 0),
-        (int(size * 0.82), int(size * 0.82), int(size * 0.05), 0.4),
-        (int(size * 0.50), int(size * 0.10), int(size * 0.035), 0.2),
-        (int(size * 0.50), int(size * 0.92), int(size * 0.03), -0.3),
-    ]
-    for x, y, s, rot in sparkles:
-        draw_sparkle(dd, x, y, s, WHITE, alpha=235, rot=rot)
-    img.alpha_composite(deco)
-
-    # "BQ" centré avec gradient
+    # "✦ BQ ✦" centré avec gradient — exactement comme _SparkleTitle
+    # de la home (les ✦ U+2726 sont teintés par le même gradient).
     cx, cy = size // 2, int(size * 0.50)
-    draw_bq_with_gradient(img, cx, cy, int(size * 0.48))
+    draw_bq_with_gradient(
+        img, cx, cy, int(size * 0.42),
+        with_side_sparkles=True,
+        sparkle_font_size=int(size * 0.22),
+        gap=int(size * 0.04),
+    )
 
     if with_mask:
         out = Image.new("RGBA", img.size, (0, 0, 0, 0))
@@ -192,24 +208,16 @@ def render(size: int, with_mask: bool) -> Image.Image:
 
 
 def render_foreground(size: int) -> Image.Image:
-    """Foreground pour adaptive icon Android — BQ + sparkles centrés
-    dans la safe zone (~66 %) sur fond transparent."""
+    """Foreground pour adaptive icon Android — BQ + 2 sparkles teintés
+    par le gradient, dans la safe zone (~66 %) sur fond transparent."""
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     cx, cy = size // 2, size // 2
-
-    deco = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    dd = ImageDraw.Draw(deco)
-    sparkles = [
-        (int(size * 0.30), int(size * 0.30), int(size * 0.035), 0),
-        (int(size * 0.70), int(size * 0.30), int(size * 0.030), 0.3),
-        (int(size * 0.30), int(size * 0.70), int(size * 0.030), 0.1),
-        (int(size * 0.70), int(size * 0.70), int(size * 0.035), -0.2),
-    ]
-    for x, y, s, rot in sparkles:
-        draw_sparkle(dd, x, y, s, WHITE, alpha=235, rot=rot)
-    img.alpha_composite(deco)
-
-    draw_bq_with_gradient(img, cx, cy, int(size * 0.36))
+    draw_bq_with_gradient(
+        img, cx, cy, int(size * 0.30),
+        with_side_sparkles=True,
+        sparkle_font_size=int(size * 0.16),
+        gap=int(size * 0.03),
+    )
     return img
 
 

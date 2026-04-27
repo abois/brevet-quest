@@ -1,0 +1,38 @@
+{
+  "voice": "fr-FR-DeniseNeural",
+  "voices": {
+    "claire": "fr-FR-VivienneMultilingualNeural"
+  },
+  "phrases": {
+    "d01": "Le millénaire a apporté de nombreux changements.",
+    "d02": "Il faut que tu sois là à l'heure.",
+    "d03": "Les enfants qu'elle a vus jouaient dans le jardin.",
+    "d04": "C'est quand même surprenant qu'il ait abandonné.",
+    "d05": "Quel courage ! Elle n'a pas hésité une seconde.",
+    "d06": "Ils se sont parlé toute la soirée.",
+    "d07": "La petite fille avait peur du tonnerre.",
+    "d08": "Nous avons appelé nos amis pour les inviter.",
+    "d09": "Cette histoire ressemble à un conte de fées.",
+    "d10": "Le voyageur traverse de magnifiques paysages.",
+    "d11": "Elle s'est rappelé tous les détails de l'événement.",
+    "d12": "On dirait qu'il pleut à verse depuis ce matin.",
+    "d13": "Les pommes que j'ai mangées étaient délicieuses.",
+    "d14": "Aussitôt qu'il aura terminé, il viendra nous voir.",
+    "d15": "Bien que fatigués, ils ont continué la randonnée.",
+    "d16": "Le chercheur a découvert une espèce inconnue.",
+    "d17": "Si j'avais su, je serais resté à la maison.",
+    "d18": "Les fleurs jaunes embellissent le balcon.",
+    "d19": "Quelle quantité d'eau as-tu bue ce matin ?",
+    "d20": "Personne ne savait quelle décision prendre.",
+    "d21": "Le philosophe défendait une thèse audacieuse.",
+    "d22": "Elles se sont préparées sans se plaindre.",
+    "d23": "Tout à coup, un éclair illumina le ciel.",
+    "d24": "Il est nécessaire que vous ayez confiance en vous.",
+    "d25": "L'œuvre de cet écrivain est intemporelle.",
+    "d26": "Mon père m'a offert un magnifique stylo plume.",
+    "d27": "À chaque instant, elle observait les nuages.",
+    "d28": "Les chevaux galopaient dans la prairie verte.",
+    "d29": "Bien qu'il fût tard, ils refusèrent de partir.",
+    "d30": "Le gardien a rangé les ballons dans le placard."
+  }
+}

@@ -702,12 +702,8 @@ class _GameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemePreset theme = ThemeService.instance.preset;
     final Color textColor = theme.isDark ? Colors.white : Bq.textOnBg;
-    final List<Color> gradient = featured
-        ? theme.statsGradient
-        : <Color>[
-            theme.cardBg,
-            Color.lerp(theme.cardBg, theme.accent, 0.10)!,
-          ];
+    final List<Color> gradient =
+        featured ? theme.statsGradient : theme.cardGradient;
     return Transform.rotate(
       angle: rotation,
       child: Material(

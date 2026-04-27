@@ -15,6 +15,7 @@ class ThemePreset {
     required this.accentDeep,
     required this.cardBg,
     required this.cardBorder,
+    required this.cardGradient,
     required this.pillBg,
     required this.pillFg,
     required this.titleGradient,
@@ -34,6 +35,7 @@ class ThemePreset {
   final Color accentDeep;
   final Color cardBg;
   final Color cardBorder;
+  final List<Color> cardGradient;
   final Color pillBg;
   final Color pillFg;
   final List<Color> titleGradient;
@@ -72,6 +74,7 @@ class ThemePreset {
     accentDeep: Color(0xFF4A1860),
     cardBg: Color(0xF2FFFFFF),
     cardBorder: Color(0xFFFFFFFF),
+    cardGradient: <Color>[Color(0xFFD9C2FF), Color(0xFFE9D5FF)],
     pillBg: Color(0xD9FFFFFF),
     pillFg: Color(0xFF7B2D8F),
     titleGradient: <Color>[
@@ -109,6 +112,7 @@ class ThemePreset {
     accentDeep: Color(0xFF14305F),
     cardBg: Color(0xF2FFFFFF),
     cardBorder: Color(0xFFFFFFFF),
+    cardGradient: <Color>[Color(0xFFB6CFFF), Color(0xFFDDEBFF)],
     pillBg: Color(0xD9FFFFFF),
     pillFg: Color(0xFF2D5BA9),
     titleGradient: <Color>[
@@ -146,6 +150,7 @@ class ThemePreset {
     accentDeep: Color(0xFF8C1F4F),
     cardBg: Color(0xF2FFFFFF),
     cardBorder: Color(0xFFFFFFFF),
+    cardGradient: <Color>[Color(0xFFFFC7E0), Color(0xFFFFE4F0)],
     pillBg: Color(0xD9FFFFFF),
     pillFg: Color(0xFFE83E8C),
     titleGradient: <Color>[
@@ -183,6 +188,7 @@ class ThemePreset {
     accentDeep: Color(0xFF0F4A36),
     cardBg: Color(0xF2FFFFFF),
     cardBorder: Color(0xFFFFFFFF),
+    cardGradient: <Color>[Color(0xFFB6F0D7), Color(0xFFD9F8E9)],
     pillBg: Color(0xD9FFFFFF),
     pillFg: Color(0xFF1F8A66),
     titleGradient: <Color>[
@@ -220,6 +226,7 @@ class ThemePreset {
     accentDeep: Color(0xFF7B2D8F),
     cardBg: Color(0xCC2D1538),
     cardBorder: Color(0xFFB8A8FF),
+    cardGradient: <Color>[Color(0xFF3A1D4F), Color(0xFF2D1538)],
     pillBg: Color(0xCC1F0E2A),
     pillFg: Color(0xFFB8A8FF),
     titleGradient: <Color>[

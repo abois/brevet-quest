@@ -101,11 +101,27 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
     }
   }
 
+  /// Compare la dictée tapée à la solution attendue.
+  /// Tolérances :
+  ///   - espaces multiples normalisés
+  ///   - majuscule du tout 1ᵉʳ caractère optionnelle
+  ///   - point final optionnel
+  /// Les autres majuscules, accents et ponctuations restent stricts.
   bool _isExactMatch(String typed, String correct) {
-    final RegExp ws = RegExp(r'\s+');
-    final String t = typed.replaceAll(ws, ' ').trim();
-    final String c = correct.replaceAll(ws, ' ').trim();
+    final String t = _normalize(typed);
+    final String c = _normalize(correct);
     return t == c;
+  }
+
+  String _normalize(String s) {
+    String x = s.replaceAll(RegExp(r'\s+'), ' ').trim();
+    // Retirer le point final s'il existe (optionnel pour l'utilisateur)
+    if (x.endsWith('.')) x = x.substring(0, x.length - 1).trimRight();
+    // Mettre la 1ʳᵉ lettre en minuscule (la majuscule de début est optionnelle)
+    if (x.isNotEmpty) {
+      x = x[0].toLowerCase() + x.substring(1);
+    }
+    return x;
   }
 
   void _validate() {
@@ -459,20 +475,68 @@ class _DiffBlock extends StatelessWidget {
   final String correct;
   final bool wasCorrect;
 
+  /// Découpe en mots tout en préservant les positions ; on garde le mot
+  /// brut (avec majuscule/ponctuation) pour l'affichage, mais on compare
+  /// sa version normalisée (insensible à la majuscule du tout 1ᵉʳ mot
+  /// et au point final).
+  List<String> _splitWords(String s) {
+    final String t = s.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (t.isEmpty) return <String>[];
+    return t.split(' ');
+  }
+
+  /// Mêmes tolérances que la validation (`_GameDicteeScreenState._normalize`).
+  String _normalizeForCompare(String word, {required bool isFirst, required bool isLast}) {
+    String x = word;
+    if (isLast && x.endsWith('.')) x = x.substring(0, x.length - 1);
+    if (isFirst && x.isNotEmpty) x = x[0].toLowerCase() + x.substring(1);
+    return x;
+  }
+
+  /// Calcule pour chaque mot s'il est correct (true) ou faux (false).
+  List<bool> _compare(List<String> typed, List<String> correct) {
+    final int n = typed.length;
+    final List<bool> ok = List<bool>.filled(n, false);
+    for (int i = 0; i < n; i++) {
+      if (i >= correct.length) {
+        ok[i] = false;
+        continue;
+      }
+      final String a = _normalizeForCompare(typed[i],
+          isFirst: i == 0, isLast: i == n - 1);
+      final String b = _normalizeForCompare(correct[i],
+          isFirst: i == 0, isLast: i == correct.length - 1);
+      ok[i] = a == b;
+    }
+    return ok;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List<String> tWords = _splitWords(typed);
+    final List<String> cWords = _splitWords(correct);
+    final List<bool> typedOk = _compare(tWords, cWords);
+    // Pour la phrase correcte, on souligne les mots qui n'étaient pas
+    // bien tapés (mêmes index si l'utilisateur a tapé le bon nombre
+    // de mots, sinon on souligne ceux au-delà du nb tapé).
+    final List<bool> correctOk = List<bool>.generate(cWords.length, (int i) {
+      if (i < typedOk.length) return typedOk[i];
+      return false;
+    });
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         _DiffCard(
           label: 'tu as écrit',
-          text: typed.isEmpty ? '(vide)' : typed,
+          words: tWords,
+          wordOk: typedOk,
           good: wasCorrect,
         ),
         const SizedBox(height: 10),
         _DiffCard(
           label: 'phrase correcte',
-          text: correct,
+          words: cWords,
+          wordOk: correctOk,
           good: true,
           highlight: true,
         ),
@@ -484,13 +548,15 @@ class _DiffBlock extends StatelessWidget {
 class _DiffCard extends StatelessWidget {
   const _DiffCard({
     required this.label,
-    required this.text,
+    required this.words,
+    required this.wordOk,
     required this.good,
     this.highlight = false,
   });
 
   final String label;
-  final String text;
+  final List<String> words;
+  final List<bool> wordOk;
   final bool good;
   final bool highlight;
 
@@ -502,6 +568,39 @@ class _DiffCard extends StatelessWidget {
     final Color fg = highlight
         ? AppColors.successDark
         : (good ? AppColors.successDark : Colors.white);
+    final Color errorMarker = highlight
+        ? AppColors.danger
+        : Colors.white;
+    final TextStyle baseStyle = GoogleFonts.quicksand(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      color: fg,
+      height: 1.45,
+    );
+    final List<TextSpan> spans = <TextSpan>[];
+    if (words.isEmpty) {
+      spans.add(TextSpan(text: '(vide)', style: baseStyle));
+    } else {
+      for (int i = 0; i < words.length; i++) {
+        final bool ok = i < wordOk.length ? wordOk[i] : false;
+        spans.add(TextSpan(
+          text: words[i],
+          style: ok
+              ? baseStyle
+              : baseStyle.copyWith(
+                  fontWeight: FontWeight.w900,
+                  decoration: TextDecoration.underline,
+                  decorationStyle: TextDecorationStyle.wavy,
+                  decorationThickness: 2,
+                  decorationColor: errorMarker,
+                  color: highlight ? AppColors.danger : fg,
+                ),
+        ));
+        if (i < words.length - 1) {
+          spans.add(TextSpan(text: ' ', style: baseStyle));
+        }
+      }
+    }
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -526,15 +625,7 @@ class _DiffCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            text,
-            style: GoogleFonts.quicksand(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: fg,
-              height: 1.4,
-            ),
-          ),
+          RichText(text: TextSpan(children: spans)),
         ],
       ),
     );

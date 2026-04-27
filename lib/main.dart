@@ -60,11 +60,17 @@ class _BrevetQuestAppState extends State<BrevetQuestApp>
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Brevet Quest',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
-      home: const HomeScreen(),
+    // L'AnimatedBuilder écoute ThemeService au plus haut niveau pour que
+    // tout l'arbre (y compris les écrans de jeu et les routes en pile)
+    // reconstruise quand l'utilisateur change de thème.
+    return AnimatedBuilder(
+      animation: ThemeService.instance,
+      builder: (BuildContext _, _) => MaterialApp(
+        title: 'Brevet Quest',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light(),
+        home: const HomeScreen(),
+      ),
     );
   }
 }

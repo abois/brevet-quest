@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/chapter.dart';
 import '../models/question.dart';
 import '../models/subject.dart';
+import 'extra_questions.dart';
 
 /// Données seed des matières du brevet des collèges (4e + 3e).
 /// Pas de backend pour l'instant — tout est codé en dur.
@@ -31,6 +32,8 @@ class SubjectsData {
         for (final c in s.chapters)
           for (final q in c.questions)
             if (q.type == type) q,
+      for (final q in ExtraQuestions.all)
+        if (q.type == type) q,
     ];
   }
 
@@ -39,13 +42,34 @@ class SubjectsData {
     QuestionType type,
     Niveau niveau,
   ) {
-    return [
+    final List<Question> base = <Question>[
       for (final s in all)
         for (final c in s.chapters)
           if (c.matchesUserNiveau(niveau))
             for (final q in c.questions)
               if (q.type == type) q,
     ];
+    // Ajoute les extras dont le chapitre parent matche le niveau.
+    for (final q in ExtraQuestions.all) {
+      if (q.type != type) continue;
+      final Chapter? parent = _chapterById(q.chapterId);
+      if (parent == null) {
+        base.add(q);
+        continue;
+      }
+      if (parent.matchesUserNiveau(niveau)) base.add(q);
+    }
+    return base;
+  }
+
+  static Chapter? _chapterById(String? id) {
+    if (id == null) return null;
+    for (final Subject s in all) {
+      for (final Chapter c in s.chapters) {
+        if (c.id == id) return c;
+      }
+    }
+    return null;
   }
 
   // ───────────── MATHS ─────────────

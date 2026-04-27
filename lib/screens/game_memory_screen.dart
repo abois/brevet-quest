@@ -83,6 +83,7 @@ class _GameMemoryScreenState extends State<GameMemoryScreen> {
         'auteurs' => 'francais',
         'anglais' => 'anglais',
         'maths' => 'maths',
+        'sciences' || 'chimie' => 'sciences',
         _ => 'histoire-geo',
       };
       _cards = cards;

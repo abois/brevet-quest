@@ -148,5 +148,215 @@ class PenduWords {
         word: 'KNOWLEDGE',
         hint: 'EN : savoir',
         subjectId: 'anglais'),
+
+    // Orthographe / vocab FR (suite)
+    PenduWord(
+        word: 'PARAGRAPHE',
+        hint: 'Bloc de texte',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'NARRATEUR',
+        hint: 'Celui qui raconte',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'PROLOGUE',
+        hint: 'Avant-propos d\'une œuvre',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'PERSONNIFICATION',
+        hint: 'Figure de style attribuant des traits humains',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'COMPARAISON',
+        hint: 'Figure de style avec « comme »',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'OXYMORE',
+        hint: 'Figure de style à termes contradictoires',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'ANTITHESE',
+        hint: 'Opposition de deux idées',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'AUTOBIOGRAPHIE',
+        hint: 'Récit de sa propre vie',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'NOUVELLE',
+        hint: 'Court récit de fiction',
+        subjectId: 'francais'),
+    PenduWord(
+        word: 'TRAGEDIE',
+        hint: 'Genre théâtral classique',
+        subjectId: 'francais'),
+
+    // Histoire-géo (suite)
+    PenduWord(
+        word: 'COLONISATION',
+        hint: 'Domination d\'un territoire',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'DECOLONISATION',
+        hint: 'Indépendance des colonies',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'TOTALITARISME',
+        hint: 'Régime contrôlant tout',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'GENOCIDE',
+        hint: 'Extermination d\'un peuple',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'RESISTANCE',
+        hint: 'Lutte contre l\'occupant',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'MONDIALISATION',
+        hint: 'Échanges à l\'échelle mondiale',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'CONSTITUTION',
+        hint: 'Loi fondamentale',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'METROPOLE',
+        hint: 'Grande ville centrale',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'DEMOGRAPHIE',
+        hint: 'Étude des populations',
+        subjectId: 'histoire-geo'),
+    PenduWord(
+        word: 'GUERRE',
+        hint: 'Conflit armé',
+        subjectId: 'histoire-geo'),
+
+    // Sciences (suite)
+    PenduWord(
+        word: 'PHOTOSYNTHESE',
+        hint: 'Comment les plantes fabriquent leur matière',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'RESPIRATION',
+        hint: 'Échanges gazeux',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'NEURONE',
+        hint: 'Cellule du cerveau',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'GENETIQUE',
+        hint: 'Étude des gènes',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'MITOSE',
+        hint: 'Division cellulaire',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'ELECTRICITE',
+        hint: 'Énergie des électrons',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'GRAVITATION',
+        hint: 'Force de Newton',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'ENERGIE',
+        hint: 'Capacité à effectuer un travail',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'CARBONE',
+        hint: 'Élément n°6',
+        subjectId: 'sciences'),
+    PenduWord(
+        word: 'OZONE',
+        hint: 'Couche protectrice (O₃)',
+        subjectId: 'sciences'),
+
+    // Maths (suite)
+    PenduWord(
+        word: 'THALES',
+        hint: 'Théorème des parallèles',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'PROBABILITE',
+        hint: 'Chance qu\'un évènement se produise',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'POURCENTAGE',
+        hint: 'Proportion sur 100',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'IDENTITE',
+        hint: 'Égalité toujours vraie',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'TRIANGLE',
+        hint: 'Figure à 3 côtés',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'HYPOTENUSE',
+        hint: 'Plus grand côté du triangle rectangle',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'PARALLELOGRAMME',
+        hint: 'Quadrilatère aux côtés opposés parallèles',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'COSINUS',
+        hint: 'Trigo : adj/hyp',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'DIVISEUR',
+        hint: 'Divise un nombre',
+        subjectId: 'maths'),
+    PenduWord(
+        word: 'PUISSANCE',
+        hint: 'a^n',
+        subjectId: 'maths'),
+
+    // Anglais (suite)
+    PenduWord(
+        word: 'BREAKFAST',
+        hint: 'EN : petit-déjeuner',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'WEDNESDAY',
+        hint: 'EN : mercredi',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'NEIGHBOUR',
+        hint: 'EN : voisin',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'BEAUTIFUL',
+        hint: 'EN : beau',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'GOVERNMENT',
+        hint: 'EN : gouvernement',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'WEATHER',
+        hint: 'EN : météo',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'THROUGHOUT',
+        hint: 'EN : tout au long',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'NEVERTHELESS',
+        hint: 'EN : néanmoins',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'FRIENDSHIP',
+        hint: 'EN : amitié',
+        subjectId: 'anglais'),
+    PenduWord(
+        word: 'YESTERDAY',
+        hint: 'EN : hier',
+        subjectId: 'anglais'),
   ];
 }

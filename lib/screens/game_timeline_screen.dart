@@ -83,13 +83,13 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultScreen(
+        builder: (BuildContext resultCtx) => ResultScreen(
           title: 'Frise · ${_deck.title}',
           correct: correct,
           answered: _ordered.length,
           record: record,
           onReplay: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(resultCtx).pushReplacement(
               MaterialPageRoute<void>(
                 builder: (_) => const GameTimelineScreen(),
               ),

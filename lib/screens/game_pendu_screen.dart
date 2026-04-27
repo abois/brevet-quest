@@ -98,13 +98,13 @@ class _GamePenduScreenState extends State<GamePenduScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultScreen(
+        builder: (BuildContext resultCtx) => ResultScreen(
           title: 'Pendu',
           correct: _correct,
           answered: _words.length,
           record: record,
           onReplay: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(resultCtx).pushReplacement(
               MaterialPageRoute<void>(
                 builder: (_) => const GamePenduScreen(),
               ),

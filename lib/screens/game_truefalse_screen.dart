@@ -128,13 +128,13 @@ class _GameTrueFalseScreenState extends State<GameTrueFalseScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultScreen(
+        builder: (BuildContext resultCtx) => ResultScreen(
           title: 'Vrai / Faux',
           correct: _correct,
           answered: _answered,
           record: record,
           onReplay: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(resultCtx).pushReplacement(
               MaterialPageRoute<void>(
                 builder: (_) => GameTrueFalseScreen(
                   totalSeconds: widget.totalSeconds,

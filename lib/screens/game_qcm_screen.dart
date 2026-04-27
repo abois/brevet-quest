@@ -158,13 +158,13 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultScreen(
+        builder: (BuildContext resultCtx) => ResultScreen(
           title: widget.title,
           correct: _correct,
           answered: _questions.length,
           record: record,
           onReplay: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(resultCtx).pushReplacement(
               MaterialPageRoute<void>(
                 builder: (_) => GameQcmScreen(
                   questionPool: widget.questionPool,

@@ -149,13 +149,13 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultScreen(
+        builder: (BuildContext resultCtx) => ResultScreen(
           title: 'Dictée',
           correct: _correct,
           answered: _items.length,
           record: record,
           onReplay: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(resultCtx).pushReplacement(
               MaterialPageRoute<void>(
                 builder: (_) => const GameDicteeScreen(),
               ),

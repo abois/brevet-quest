@@ -94,13 +94,13 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultScreen(
+        builder: (BuildContext resultCtx) => ResultScreen(
           title: 'L\'intrus',
           correct: _correct,
           answered: _sets.length,
           record: record,
           onReplay: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(resultCtx).pushReplacement(
               MaterialPageRoute<void>(
                 builder: (_) => const GameIntrusScreen(),
               ),

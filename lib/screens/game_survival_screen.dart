@@ -93,13 +93,13 @@ class _GameSurvivalScreenState extends State<GameSurvivalScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultScreen(
+        builder: (BuildContext resultCtx) => ResultScreen(
           title: 'Élimination · streak $_streak',
           correct: _correct,
           answered: _answered,
           record: record,
           onReplay: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(resultCtx).pushReplacement(
               MaterialPageRoute<void>(
                 builder: (_) => const GameSurvivalScreen(),
               ),

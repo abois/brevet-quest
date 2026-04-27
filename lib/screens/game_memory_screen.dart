@@ -135,13 +135,13 @@ class _GameMemoryScreenState extends State<GameMemoryScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultScreen(
+        builder: (BuildContext resultCtx) => ResultScreen(
           title: 'Memory · $_deckName ${_elapsedLabel(elapsed)}',
           correct: _matches,
           answered: _attempts,
           record: record,
           onReplay: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(resultCtx).pushReplacement(
               MaterialPageRoute<void>(
                 builder: (_) => const GameMemoryScreen(),
               ),

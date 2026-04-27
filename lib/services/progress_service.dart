@@ -277,6 +277,34 @@ class ProgressService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// IDs des items déjà servis pour un pool (mini-jeu) donné.
+  Set<String> seenItems(String poolId) =>
+      _progress.seenItems[poolId] ?? <String>{};
+
+  /// Pioche `count` items du pool en évitant ceux déjà vus.
+  /// Recycle (réinitialise le tracking de ce pool) si le pool est épuisé.
+  /// Retourne la liste tirée (et marque les items comme vus en SharedPrefs).
+  Future<List<T>> pickUnseen<T>({
+    required String poolId,
+    required List<T> pool,
+    required String Function(T) idOf,
+    required int count,
+  }) async {
+    final Set<String> seen = Set<String>.of(seenItems(poolId));
+    List<T> remaining = pool.where((T it) => !seen.contains(idOf(it))).toList();
+    if (remaining.length < count) {
+      // Pool épuisé pour ce niveau de difficulté → on recycle.
+      seen.clear();
+      remaining = List<T>.of(pool);
+    }
+    remaining.shuffle();
+    final List<T> picked = remaining.take(count).toList();
+    seen.addAll(picked.map(idOf));
+    _progress.seenItems[poolId] = seen;
+    await _save();
+    return picked;
+  }
+
   static String _today() {
     final DateTime n = DateTime.now();
     return _iso(n);

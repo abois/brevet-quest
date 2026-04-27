@@ -13,11 +13,13 @@ class UserProgress {
     Map<String, int>? questsProgress,
     Set<String>? questsCompleted,
     Set<String>? questsClaimed,
+    Map<String, Set<String>>? seenItems,
   })  : badges = badges ?? <String>{},
         xpBySubject = xpBySubject ?? <String, int>{},
         questsProgress = questsProgress ?? <String, int>{},
         questsCompleted = questsCompleted ?? <String>{},
-        questsClaimed = questsClaimed ?? <String>{};
+        questsClaimed = questsClaimed ?? <String>{},
+        seenItems = seenItems ?? <String, Set<String>>{};
 
   int xp;
   int totalAnswered;
@@ -44,6 +46,11 @@ class UserProgress {
 
   /// Quêtes dont la récompense a été récupérée par le joueur.
   Set<String> questsClaimed;
+
+  /// IDs des items déjà servis par pool (poolId -> set d'IDs).
+  /// Permet de ne pas re-servir une question vue tant que la progression
+  /// n'a pas été réinitialisée.
+  Map<String, Set<String>> seenItems;
 
   /// Niveau dérivé de l'XP — palier doux : niveau N requiert N*100 XP.
   int get level {
@@ -91,6 +98,10 @@ class UserProgress {
         'questsProgress': questsProgress,
         'questsCompleted': questsCompleted.toList(),
         'questsClaimed': questsClaimed.toList(),
+        'seenItems': seenItems.map(
+          (String k, Set<String> v) =>
+              MapEntry<String, List<String>>(k, v.toList()),
+        ),
       };
 
   factory UserProgress.fromJson(Map<String, dynamic> json) => UserProgress(
@@ -119,5 +130,12 @@ class UserProgress {
             ((json['questsClaimed'] as List?) ?? const <dynamic>[])
                 .map((dynamic e) => e.toString())
                 .toSet(),
+        seenItems: ((json['seenItems'] as Map?) ?? const <dynamic, dynamic>{})
+            .map((dynamic k, dynamic v) => MapEntry<String, Set<String>>(
+                  k.toString(),
+                  ((v as List?) ?? const <dynamic>[])
+                      .map((dynamic e) => e.toString())
+                      .toSet(),
+                )),
       );
 }

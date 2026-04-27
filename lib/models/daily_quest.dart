@@ -19,6 +19,7 @@ enum GameId {
   sort,
   intrus,
   pendu,
+  problemes,
 }
 
 extension GameIdX on GameId {
@@ -33,6 +34,7 @@ extension GameIdX on GameId {
         GameId.sort => 'sort',
         GameId.intrus => 'intrus',
         GameId.pendu => 'pendu',
+        GameId.problemes => 'problemes',
       };
 
   String get label => switch (this) {
@@ -46,6 +48,7 @@ extension GameIdX on GameId {
         GameId.sort => 'Tri',
         GameId.intrus => 'L\'intrus',
         GameId.pendu => 'Pendu',
+        GameId.problemes => 'Problèmes',
       };
 
   String get emoji => switch (this) {
@@ -59,6 +62,7 @@ extension GameIdX on GameId {
         GameId.sort => '🗂️',
         GameId.intrus => '🎭',
         GameId.pendu => '🪢',
+        GameId.problemes => '📐',
       };
 }
 

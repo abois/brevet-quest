@@ -17,6 +17,7 @@ import 'game_dictee_screen.dart';
 import 'game_intrus_screen.dart';
 import 'game_memory_screen.dart';
 import 'game_pendu_screen.dart';
+import 'game_problemes_screen.dart';
 import 'game_qcm_screen.dart';
 import 'game_sort_screen.dart';
 import 'game_survival_screen.dart';
@@ -182,6 +183,15 @@ class HomeScreen extends StatelessWidget {
                       kind: _GameKind.pendu,
                       rotation: 0.011,
                     ),
+                    const SizedBox(height: 10),
+                    const _GameCard(
+                      emoji: '📐',
+                      title: 'Problèmes',
+                      subtitle: '10 problèmes · Pythagore, Thalès, % …',
+                      tags: <String>['#géométrie', '#calcul'],
+                      kind: _GameKind.problemes,
+                      rotation: -0.013,
+                    ),
                     const SizedBox(height: 18),
                     Center(
                       child: Material(
@@ -257,6 +267,7 @@ enum _GameKind {
   sort,
   intrus,
   pendu,
+  problemes,
 }
 
 class _StatsCard extends StatelessWidget {
@@ -812,6 +823,7 @@ class _GameCard extends StatelessWidget {
       _GameKind.sort => const GameSortScreen(),
       _GameKind.intrus => const GameIntrusScreen(),
       _GameKind.pendu => const GamePenduScreen(),
+      _GameKind.problemes => const GameProblemesScreen(),
     };
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => screen));
   }

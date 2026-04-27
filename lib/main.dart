@@ -61,13 +61,16 @@ class _BrevetQuestAppState extends State<BrevetQuestApp>
 
   @override
   Widget build(BuildContext context) {
-    // ThemeScope est placé via `builder` pour qu'il englobe les écrans
-    // poussés par Navigator (sinon les routes en pile gardent leur
-    // ancien thème). Tout écran qui appelle ThemeScope.of(context)
-    // dans son build sera rebuild au changement de thème.
+    // Au changement de thème, on change la `key` du MaterialApp pour
+    // forcer la reconstruction complète de tout l'arbre (y compris les
+    // routes en pile). C'est radical mais garantit qu'aucun élément ne
+    // garde l'ancien thème. La pile Navigator est réinitialisée — le
+    // user retombe sur la home avec le bon thème, ce qui est attendu
+    // puisque le changement se fait depuis le profil.
     return AnimatedBuilder(
       animation: ThemeService.instance,
       builder: (BuildContext _, _) => MaterialApp(
+        key: ValueKey<String>('theme-${ThemeService.instance.preset.id}'),
         title: 'Brevet Quest',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),

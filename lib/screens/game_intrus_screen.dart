@@ -33,9 +33,25 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
   @override
   void initState() {
     super.initState();
+    final Random rng = Random();
     final List<IntrusSet> shuffled = List<IntrusSet>.of(IntrusData.all)
-      ..shuffle(Random());
-    _sets = shuffled.take(widget.rounds).toList();
+      ..shuffle(rng);
+    _sets = shuffled
+        .take(widget.rounds)
+        .map((IntrusSet s) => _shuffleItems(s, rng))
+        .toList();
+  }
+
+  IntrusSet _shuffleItems(IntrusSet s, Random rng) {
+    final String intruder = s.items[s.intruderIndex];
+    final List<String> items = List<String>.of(s.items)..shuffle(rng);
+    return IntrusSet(
+      items: items,
+      intruderIndex: items.indexOf(intruder),
+      theme: s.theme,
+      explanation: s.explanation,
+      subjectId: s.subjectId,
+    );
   }
 
   void _onPick(int i) {

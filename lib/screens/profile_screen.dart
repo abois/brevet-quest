@@ -148,13 +148,13 @@ class _BadgeChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
         color: unlocked
-            ? Colors.white.withValues(alpha: 0.95)
-            : Colors.white.withValues(alpha: 0.4),
+            ? Bq.cardBg
+            : Bq.cardBg.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: unlocked
               ? Bq.accent.withValues(alpha: 0.5)
-              : Colors.white.withValues(alpha: 0.6),
+              : Bq.cardBorder.withValues(alpha: 0.6),
           width: 1.5,
         ),
       ),
@@ -198,10 +198,10 @@ class _XpBySubject extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.92),
+        color: Bq.cardBg,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.85),
+          color: Bq.cardBorder.withValues(alpha: 0.85),
           width: 1.5,
         ),
       ),
@@ -244,7 +244,7 @@ class _SubjectXpRow extends StatelessWidget {
           height: 32,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.lavender100,
+            color: Bq.cardBg,
             shape: BoxShape.circle,
           ),
           child: Text(subject.emoji, style: const TextStyle(fontSize: 16)),
@@ -380,12 +380,10 @@ class _SelectorChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected
-                ? AppColors.violet
-                : Colors.white.withValues(alpha: 0.95),
+            color: selected ? Bq.accent : Bq.cardBg,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected ? AppColors.violet : AppColors.lavender200,
+              color: selected ? Bq.accent : Bq.cardBorder,
               width: 2,
             ),
           ),

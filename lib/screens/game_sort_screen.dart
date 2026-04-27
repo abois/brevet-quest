@@ -10,6 +10,7 @@ import '../services/audio_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -166,7 +167,7 @@ class _GameSortScreenState extends State<GameSortScreen> {
                             style: GoogleFonts.quicksand(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
-                              color: AppColors.violet,
+                              color: Bq.accent,
                             ),
                           ),
                         ],
@@ -233,7 +234,7 @@ class _GameSortScreenState extends State<GameSortScreen> {
                           fontWeight: FontWeight.w900,
                           color: _bank!.isEmpty
                               ? Colors.white
-                              : AppColors.plumDark,
+                              : Bq.textOnBg,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -273,7 +274,7 @@ class _CategoryColumn extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.75),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.violet.withValues(alpha: 0.3),
+              color: Bq.accent.withValues(alpha: 0.3),
               width: 1.5,
             ),
           ),
@@ -284,7 +285,7 @@ class _CategoryColumn extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppColors.violet,
+                  color: Bq.accent,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
@@ -346,7 +347,7 @@ class _Bank extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: AppColors.violet.withValues(alpha: 0.3),
+              color: Bq.accent.withValues(alpha: 0.3),
               width: 1.5,
             ),
           ),
@@ -357,7 +358,7 @@ class _Bank extends StatelessWidget {
                     style: GoogleFonts.quicksand(
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.violet,
+                      color: Bq.accent,
                     ),
                   ),
                 )
@@ -412,16 +413,16 @@ class _Chip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: dragging ? AppColors.violet : AppColors.lavender100,
+        color: dragging ? AppColors.violet : Bq.cardBg,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: dragging ? AppColors.violetDeep : AppColors.violet,
+          color: dragging ? Bq.accentDeep : AppColors.violet,
           width: 1.5,
         ),
         boxShadow: dragging
             ? <BoxShadow>[
                 BoxShadow(
-                  color: AppColors.violet.withValues(alpha: 0.4),
+                  color: Bq.accent.withValues(alpha: 0.4),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -433,7 +434,7 @@ class _Chip extends StatelessWidget {
         style: GoogleFonts.quicksand(
           fontSize: 11,
           fontWeight: FontWeight.w800,
-          color: dragging ? Colors.white : AppColors.plumDark,
+          color: dragging ? Colors.white : Bq.textOnBg,
         ),
       ),
     );

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../data/problemes_data.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 
 /// Vue d'un schéma géométrique pour illustrer un problème. Affiche
 /// optionnellement un emoji décoratif en haut-droite (option A légère).
@@ -23,7 +24,7 @@ class ProblemeSchemaView extends StatelessWidget {
           color: Colors.white.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: AppColors.violet.withValues(alpha: 0.25),
+            color: Bq.accent.withValues(alpha: 0.25),
             width: 1.5,
           ),
         ),
@@ -52,17 +53,17 @@ class _SchemaPainter extends CustomPainter {
   final ProblemeSchema schema;
 
   static final Paint _stroke = Paint()
-    ..color = AppColors.violetDeep
+    ..color = Bq.accentDeep
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2.5
     ..strokeJoin = StrokeJoin.round;
 
   static final Paint _fill = Paint()
-    ..color = AppColors.lavender100.withValues(alpha: 0.6)
+    ..color = Bq.cardBg.withValues(alpha: 0.6)
     ..style = PaintingStyle.fill;
 
   static final Paint _dashed = Paint()
-    ..color = AppColors.violet.withValues(alpha: 0.5)
+    ..color = Bq.accent.withValues(alpha: 0.5)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1.5;
 
@@ -104,7 +105,7 @@ class _SchemaPainter extends CustomPainter {
     String text,
     Offset position, {
     double fontSize = 13,
-    Color color = AppColors.plumDark,
+    Color? color,
     Alignment alignment = Alignment.center,
   }) {
     final TextPainter tp = TextPainter(
@@ -113,7 +114,7 @@ class _SchemaPainter extends CustomPainter {
         style: GoogleFonts.quicksand(
           fontSize: fontSize,
           fontWeight: FontWeight.w900,
-          color: color,
+          color: color ?? Bq.textOnBg,
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -552,14 +553,14 @@ class _SchemaPainter extends CustomPainter {
     final Offset n = Offset(-u.dy, u.dx);
     const double gap = 7;
     final Paint ladderPaint = Paint()
-      ..color = AppColors.violetDeep
+      ..color = Bq.accentDeep
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
     for (final double sign in <double>[-1, 1]) {
       canvas.drawLine(foot + n * gap * sign, top + n * gap * sign, ladderPaint);
     }
     final Paint rungPaint = Paint()
-      ..color = AppColors.violetDeep
+      ..color = Bq.accentDeep
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5;
     for (int i = 1; i <= 7; i++) {
@@ -573,7 +574,7 @@ class _SchemaPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5
-        ..color = AppColors.violetDeep,
+        ..color = Bq.accentDeep,
     );
     // Étiquettes
     if (labels['base'] != null) {
@@ -617,7 +618,7 @@ class _SchemaPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5
-        ..color = AppColors.violetDeep,
+        ..color = Bq.accentDeep,
     );
     // Étiquettes
     if (labels['base'] != null) {
@@ -719,7 +720,7 @@ class _SchemaPainter extends CustomPainter {
     );
     // Câble du télésiège
     canvas.drawLine(bottom, top, Paint()
-      ..color = AppColors.violetDeep
+      ..color = Bq.accentDeep
       ..strokeWidth = 3);
     // Cabine au milieu
     final Offset cabin = Offset.lerp(bottom, top, 0.5)!;
@@ -733,7 +734,7 @@ class _SchemaPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5
-        ..color = AppColors.violetDeep,
+        ..color = Bq.accentDeep,
     );
     // Arc d'angle au coin bas-gauche
     final Rect arc = Rect.fromCircle(center: bottom, radius: 22);
@@ -821,7 +822,7 @@ class _SchemaPainter extends CustomPainter {
     }
     // Rayon
     canvas.drawLine(c, Offset(c.dx + r, c.dy), _stroke);
-    canvas.drawCircle(c, 3, _paintFill(AppColors.violetDeep));
+    canvas.drawCircle(c, 3, _paintFill(Bq.accentDeep));
     if (labels['radius'] != null) {
       _drawLabelChip(canvas, '${labels['radius']} cm',
           Offset(c.dx + r / 2, c.dy - 14));
@@ -849,7 +850,7 @@ class _SchemaPainter extends CustomPainter {
     }
     // Rayon
     canvas.drawLine(c, Offset(c.dx + r, c.dy), _stroke);
-    canvas.drawCircle(c, 3, _paintFill(AppColors.violetDeep));
+    canvas.drawCircle(c, 3, _paintFill(Bq.accentDeep));
     if (labels['radius'] != null) {
       _drawLabelChip(canvas, '${labels['radius']} m',
           Offset(c.dx + r / 2, c.dy - 14));
@@ -1008,7 +1009,8 @@ class _SchemaPainter extends CustomPainter {
   }
 
   void _drawLabelChip(Canvas canvas, String text, Offset pos,
-      {Color color = AppColors.plumDark}) {
+      {Color? color}) {
+    color ??= Bq.textOnBg;
     final TextPainter tp = TextPainter(
       text: TextSpan(
         text: text,

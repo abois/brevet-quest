@@ -10,6 +10,7 @@ import '../services/audio_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -163,7 +164,7 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
                         style: GoogleFonts.quicksand(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.violet,
+                          color: Bq.accent,
                         ),
                       ),
                     ),
@@ -206,10 +207,10 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.only(top: 8),
                     decoration: BoxDecoration(
-                      color: AppColors.glassSoft,
+                      color: Bq.pillBg,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: AppColors.violet.withValues(alpha: 0.3),
+                        color: Bq.accent.withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -224,7 +225,7 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
                             style: GoogleFonts.quicksand(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.plumDark,
+                              color: Bq.textOnBg,
                             ),
                           ),
                         ),
@@ -259,7 +260,7 @@ class _IntrusCard extends StatelessWidget {
   Color _bg() {
     if (!revealed) {
       return isSelected
-          ? AppColors.lavender200
+          ? Bq.cardBorder
           : Colors.white.withValues(alpha: 0.95);
     }
     if (isIntruder) return AppColors.success;
@@ -271,7 +272,7 @@ class _IntrusCard extends StatelessWidget {
     if (!revealed) {
       return isSelected
           ? AppColors.violet
-          : AppColors.violet.withValues(alpha: 0.3);
+          : Bq.accent.withValues(alpha: 0.3);
     }
     if (isIntruder) return AppColors.successDark;
     if (isSelected) return AppColors.danger;
@@ -279,10 +280,10 @@ class _IntrusCard extends StatelessWidget {
   }
 
   Color _fg() {
-    if (!revealed) return AppColors.plumDark;
+    if (!revealed) return Bq.textOnBg;
     if (isIntruder) return AppColors.successDark;
     if (isSelected) return Colors.white;
-    return AppColors.plumDark.withValues(alpha: 0.6);
+    return Bq.textOnBg.withValues(alpha: 0.6);
   }
 
   @override
@@ -301,7 +302,7 @@ class _IntrusCard extends StatelessWidget {
             border: Border.all(color: _border(), width: 2),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: AppColors.violet.withValues(alpha: 0.15),
+                color: Bq.accent.withValues(alpha: 0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),

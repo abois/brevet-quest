@@ -11,6 +11,7 @@ import '../services/audio_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -213,7 +214,7 @@ class _GameMemoryScreenState extends State<GameMemoryScreen> {
                             style: GoogleFonts.quicksand(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
-                              color: AppColors.violet,
+                              color: Bq.accent,
                             ),
                           ),
                         ],
@@ -232,7 +233,7 @@ class _GameMemoryScreenState extends State<GameMemoryScreen> {
                         style: GoogleFonts.quicksand(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.violet,
+                          color: Bq.accent,
                         ),
                       ),
                     ),
@@ -297,7 +298,7 @@ class _MemoryTile extends StatelessWidget {
                       Colors.white,
                       card.matched
                           ? AppColors.success
-                          : AppColors.lavender100,
+                          : Bq.cardBg,
                     ]
                   : const <Color>[
                       AppColors.lavender300,
@@ -315,7 +316,7 @@ class _MemoryTile extends StatelessWidget {
             ),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: AppColors.violet.withValues(alpha: 0.18),
+                color: Bq.accent.withValues(alpha: 0.18),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -330,7 +331,7 @@ class _MemoryTile extends StatelessWidget {
                   style: GoogleFonts.quicksand(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.plumDark,
+                    color: Bq.textOnBg,
                   ),
                 )
               : const Text(

@@ -13,6 +13,7 @@ import '../services/preferences_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -282,7 +283,7 @@ class _Header extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.violet,
+                  color: Bq.accent,
                 ),
               ),
             ),
@@ -339,7 +340,7 @@ class _Hint extends StatelessWidget {
           style: GoogleFonts.quicksand(
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: AppColors.violet.withValues(alpha: 0.7),
+            color: Bq.accent.withValues(alpha: 0.7),
             letterSpacing: 1.2,
           ),
         ),
@@ -365,7 +366,7 @@ class _BackgroundCard extends StatelessWidget {
           style: GoogleFonts.quicksand(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: AppColors.plumDark.withValues(alpha: 0.4),
+            color: Bq.textOnBg.withValues(alpha: 0.4),
             height: 1.4,
           ),
         ),
@@ -411,7 +412,7 @@ class _SwipeCard extends StatelessWidget {
                     style: GoogleFonts.quicksand(
                       fontSize: 19,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.plumDark,
+                      color: Bq.textOnBg,
                       height: 1.4,
                     ),
                   ),
@@ -465,7 +466,7 @@ class _CardSurface extends StatelessWidget {
         border: Border.all(color: Colors.white, width: 3),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: AppColors.violet.withValues(alpha: 0.25),
+            color: Bq.accent.withValues(alpha: 0.25),
             blurRadius: 22,
             offset: const Offset(0, 10),
           ),

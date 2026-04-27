@@ -8,6 +8,7 @@ import '../services/audio_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -166,7 +167,7 @@ class _GamePenduScreenState extends State<GamePenduScreen> {
                         style: GoogleFonts.quicksand(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.violet,
+                          color: Bq.accent,
                         ),
                       ),
                     ),
@@ -295,7 +296,7 @@ class _WordDisplay extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: AppColors.violet.withValues(alpha: 0.3),
+                color: Bq.accent.withValues(alpha: 0.3),
                 width: 1.5,
               ),
             ),
@@ -306,7 +307,7 @@ class _WordDisplay extends StatelessWidget {
                 fontWeight: FontWeight.w900,
                 color: reveal && !guessed.contains(letter)
                     ? AppColors.danger
-                    : AppColors.plumDark,
+                    : Bq.textOnBg,
               ),
             ),
           ),
@@ -390,7 +391,7 @@ class _Key extends StatelessWidget {
   Color _fg() {
     switch (state) {
       case _KeyState.idle:
-        return AppColors.plumDark;
+        return Bq.textOnBg;
       case _KeyState.hit:
         return AppColors.successDark;
       case _KeyState.miss:
@@ -414,7 +415,7 @@ class _Key extends StatelessWidget {
             color: _bg(),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: AppColors.violet.withValues(alpha: 0.25),
+              color: Bq.accent.withValues(alpha: 0.25),
               width: 1.2,
             ),
           ),

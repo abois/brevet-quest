@@ -7,6 +7,7 @@ import '../models/subject.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'chapter_picker_screen.dart';
 
@@ -45,7 +46,7 @@ class SubjectPickerScreen extends StatelessWidget {
                           style: GoogleFonts.quicksand(
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
-                            color: AppColors.violet,
+                            color: Bq.accent,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -159,7 +160,7 @@ class _SubjectTile extends StatelessWidget {
                       style: GoogleFonts.quicksand(
                         fontSize: 17,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.plumDark,
+                        color: Bq.textOnBg,
                       ),
                     ),
                     Text(
@@ -168,7 +169,7 @@ class _SubjectTile extends StatelessWidget {
                       style: GoogleFonts.quicksand(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.plumDark.withValues(alpha: 0.7),
+                        color: Bq.textOnBg.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -182,16 +183,16 @@ class _SubjectTile extends StatelessWidget {
                       child: Text(
                         '✦ $xp XP',
                         style: AppText.tag.copyWith(
-                          color: AppColors.plumDark,
+                          color: Bq.textOnBg,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const Text('→',
+              Text('→',
                   style:
-                      TextStyle(fontSize: 22, color: AppColors.plumDark)),
+                      TextStyle(fontSize: 22, color: Bq.textOnBg)),
             ],
           ),
         ),

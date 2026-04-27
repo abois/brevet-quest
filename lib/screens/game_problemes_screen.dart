@@ -10,6 +10,7 @@ import '../services/preferences_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import '../widgets/probleme_schema_view.dart';
 import 'result_screen.dart';
@@ -222,7 +223,7 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
                   style: GoogleFonts.quicksand(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.violet,
+                    color: Bq.accent,
                   ),
                 ),
               ),
@@ -248,7 +249,7 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
                       color: Colors.white.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: AppColors.violet.withValues(alpha: 0.25),
+                        color: Bq.accent.withValues(alpha: 0.25),
                         width: 1.5,
                       ),
                     ),
@@ -257,7 +258,7 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
                       style: GoogleFonts.quicksand(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.plumDark,
+                        color: Bq.textOnBg,
                         height: 1.4,
                       ),
                     ),
@@ -299,7 +300,7 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
                   style: GoogleFonts.quicksand(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.violetDeep,
+                    color: Bq.accentDeep,
                   ),
                   decoration: InputDecoration(
                     filled: true,
@@ -308,7 +309,7 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
                     hintStyle: GoogleFonts.quicksand(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.plumDark.withValues(alpha: 0.35),
+                      color: Bq.textOnBg.withValues(alpha: 0.35),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(18),

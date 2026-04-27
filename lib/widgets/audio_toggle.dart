@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/audio_service.dart';
-import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 
 /// Petit bouton paire : musique 🔊/🔇 + SFX 🔔/🔕.
 class AudioToggle extends StatelessWidget {
@@ -58,7 +58,7 @@ class _ToggleChip extends StatelessWidget {
           height: 36,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.glass,
+            color: Bq.cardBg,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.85),

@@ -10,6 +10,7 @@ import '../services/audio_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -210,7 +211,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
                         style: GoogleFonts.quicksand(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.violet,
+                          color: Bq.accent,
                         ),
                       ),
                     ),
@@ -268,7 +269,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
                     border: Border.all(color: Colors.white, width: 3),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                        color: AppColors.violet.withValues(alpha: 0.22),
+                        color: Bq.accent.withValues(alpha: 0.22),
                         blurRadius: 18,
                         offset: const Offset(0, 8),
                       ),
@@ -280,7 +281,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
                     style: GoogleFonts.quicksand(
                       fontSize: 38,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.plumDark,
+                      color: Bq.textOnBg,
                     ),
                   ),
                 ),
@@ -303,7 +304,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
                   style: GoogleFonts.quicksand(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.violetDeep,
+                    color: Bq.accentDeep,
                   ),
                   decoration: InputDecoration(
                     filled: true,
@@ -313,7 +314,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color:
-                          AppColors.plumDark.withValues(alpha: 0.35),
+                          Bq.textOnBg.withValues(alpha: 0.35),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -338,7 +339,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.violet,
+                        color: Bq.accent,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(

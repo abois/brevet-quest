@@ -11,6 +11,7 @@ import '../services/audio_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -218,7 +219,7 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
                         style: GoogleFonts.quicksand(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.violet,
+                          color: Bq.accent,
                         ),
                       ),
                     ),
@@ -263,7 +264,7 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.violet,
+                        color: Bq.accent,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -325,12 +326,12 @@ class _PlayBox extends StatelessWidget {
             border: Border.all(
               color: canPlay
                   ? AppColors.violet
-                  : AppColors.violet.withValues(alpha: 0.3),
+                  : Bq.accent.withValues(alpha: 0.3),
               width: 2,
             ),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: AppColors.violet.withValues(alpha: 0.18),
+                color: Bq.accent.withValues(alpha: 0.18),
                 blurRadius: 14,
                 offset: const Offset(0, 6),
               ),
@@ -345,7 +346,7 @@ class _PlayBox extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: canPlay
                       ? AppColors.violet
-                      : AppColors.violet.withValues(alpha: 0.3),
+                      : Bq.accent.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -370,7 +371,7 @@ class _PlayBox extends StatelessWidget {
                       style: GoogleFonts.quicksand(
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.plumDark,
+                        color: Bq.textOnBg,
                       ),
                     ),
                     Text(
@@ -380,7 +381,7 @@ class _PlayBox extends StatelessWidget {
                       style: GoogleFonts.quicksand(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.plumDark.withValues(alpha: 0.7),
+                        color: Bq.textOnBg.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -395,7 +396,7 @@ class _PlayBox extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: i < playsLeft
                           ? AppColors.violet
-                          : AppColors.violet.withValues(alpha: 0.2),
+                          : Bq.accent.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -425,7 +426,7 @@ class _Input extends StatelessWidget {
       style: GoogleFonts.quicksand(
         fontSize: 15,
         fontWeight: FontWeight.w700,
-        color: AppColors.plumDark,
+        color: Bq.textOnBg,
         height: 1.4,
       ),
       decoration: InputDecoration(
@@ -435,7 +436,7 @@ class _Input extends StatelessWidget {
         hintStyle: GoogleFonts.quicksand(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: AppColors.plumDark.withValues(alpha: 0.4),
+          color: Bq.textOnBg.withValues(alpha: 0.4),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),

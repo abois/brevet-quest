@@ -10,6 +10,7 @@ import '../services/audio_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -169,7 +170,7 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
                             style: GoogleFonts.quicksand(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
-                              color: AppColors.violet,
+                              color: Bq.accent,
                             ),
                           ),
                         ],
@@ -233,7 +234,7 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
                           fontSize: 15,
                           fontWeight: FontWeight.w900,
                           color: _checked
-                              ? AppColors.plumDark
+                              ? Bq.textOnBg
                               : Colors.white,
                           letterSpacing: 1.2,
                         ),
@@ -272,7 +273,7 @@ class _TimelineTile extends StatelessWidget {
   }
 
   Color _border() {
-    if (!revealed) return AppColors.violet.withValues(alpha: 0.3);
+    if (!revealed) return Bq.accent.withValues(alpha: 0.3);
     return rightPosition ? AppColors.successDark : AppColors.danger;
   }
 
@@ -289,7 +290,7 @@ class _TimelineTile extends StatelessWidget {
           border: Border.all(color: _border(), width: 2),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: AppColors.violet.withValues(alpha: 0.12),
+              color: Bq.accent.withValues(alpha: 0.12),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -302,7 +303,7 @@ class _TimelineTile extends StatelessWidget {
               height: 32,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: AppColors.lavender100,
+                color: Bq.cardBg,
                 shape: BoxShape.circle,
               ),
               child: Text(
@@ -310,7 +311,7 @@ class _TimelineTile extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.violetDeep,
+                  color: Bq.accentDeep,
                 ),
               ),
             ),
@@ -328,7 +329,7 @@ class _TimelineTile extends StatelessWidget {
                           ? (rightPosition
                               ? AppColors.successDark
                               : Colors.white)
-                          : AppColors.plumDark,
+                          : Bq.textOnBg,
                     ),
                   ),
                   if (revealed)

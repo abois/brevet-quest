@@ -13,6 +13,7 @@ import '../services/preferences_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -239,7 +240,7 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
                     border: Border.all(color: Colors.white, width: 2),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                        color: AppColors.violet.withValues(alpha: 0.18),
+                        color: Bq.accent.withValues(alpha: 0.18),
                         blurRadius: 14,
                         offset: const Offset(0, 6),
                       ),
@@ -250,7 +251,7 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
                     style: GoogleFonts.quicksand(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.plumDark,
+                      color: Bq.textOnBg,
                       height: 1.35,
                     ),
                   ),
@@ -325,7 +326,7 @@ class _Header extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.violet,
+                  color: Bq.accent,
                 ),
               ),
             ),
@@ -413,7 +414,7 @@ class _ChoiceTile extends StatelessWidget {
     if (!revealed) {
       return isSelected
           ? AppColors.violet
-          : AppColors.violet.withValues(alpha: 0.25);
+          : Bq.accent.withValues(alpha: 0.25);
     }
     if (isCorrect) return AppColors.successDark;
     if (isSelected) return AppColors.danger;
@@ -452,7 +453,7 @@ class _ChoiceTile extends StatelessWidget {
                 height: 32,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.lavender100,
+                  color: Bq.cardBg,
                   shape: BoxShape.circle,
                 ),
                 child: Text(
@@ -460,7 +461,7 @@ class _ChoiceTile extends StatelessWidget {
                   style: GoogleFonts.quicksand(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.violetDeep,
+                    color: Bq.accentDeep,
                   ),
                 ),
               ),
@@ -471,7 +472,7 @@ class _ChoiceTile extends StatelessWidget {
                   style: GoogleFonts.quicksand(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.plumDark,
+                    color: Bq.textOnBg,
                   ),
                 ),
               ),
@@ -506,10 +507,10 @@ class _Explanation extends StatelessWidget {
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.glassSoft,
+        color: Bq.pillBg,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: AppColors.violet.withValues(alpha: 0.3),
+          color: Bq.accent.withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),
@@ -524,7 +525,7 @@ class _Explanation extends StatelessWidget {
               style: GoogleFonts.quicksand(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: AppColors.plumDark,
+                color: Bq.textOnBg,
                 height: 1.4,
               ),
             ),
@@ -549,7 +550,7 @@ class _EmptyState extends StatelessWidget {
             style: GoogleFonts.quicksand(
               fontSize: 16,
               fontWeight: FontWeight.w800,
-              color: AppColors.plumDark,
+              color: Bq.textOnBg,
             ),
           ),
         ),

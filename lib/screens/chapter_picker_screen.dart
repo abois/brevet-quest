@@ -7,6 +7,7 @@ import '../models/question.dart';
 import '../models/subject.dart';
 import '../services/preferences_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 import 'game_qcm_screen.dart';
 
@@ -250,7 +251,7 @@ class _ChapterTile extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.9),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: AppColors.violet.withValues(alpha: 0.25),
+              color: Bq.accent.withValues(alpha: 0.25),
               width: 1.5,
             ),
           ),
@@ -260,7 +261,7 @@ class _ChapterTile extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.lavender100,
+                  color: Bq.cardBg,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
@@ -277,7 +278,7 @@ class _ChapterTile extends StatelessWidget {
                       style: GoogleFonts.quicksand(
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.plumDark,
+                        color: Bq.textOnBg,
                       ),
                     ),
                     Text(
@@ -285,7 +286,7 @@ class _ChapterTile extends StatelessWidget {
                       style: GoogleFonts.quicksand(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.plumDark.withValues(alpha: 0.6),
+                        color: Bq.textOnBg.withValues(alpha: 0.6),
                       ),
                     ),
                   ],

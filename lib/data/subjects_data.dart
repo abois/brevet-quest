@@ -61,7 +61,7 @@ class SubjectsData {
         id: 'maths-pythagore',
         name: 'Pythagore & Thalès',
         emoji: '📐',
-        niveau: Niveau.all,
+        niveau: Niveau.niveau4,
         questions: [
           Question(
             id: 'm-pyt-1',
@@ -257,7 +257,7 @@ class SubjectsData {
         id: 'maths-geometrie',
         name: 'Géométrie & Aires',
         emoji: '🔷',
-        niveau: Niveau.all,
+        niveau: Niveau.niveau4,
         questions: [
           Question(
             id: 'm-geo-1',
@@ -538,7 +538,7 @@ class SubjectsData {
         id: 'fr-litterature',
         name: 'Littérature',
         emoji: '📖',
-        niveau: Niveau.niveau3,
+        niveau: Niveau.all,
         questions: [
           Question(
             id: 'f-lit-1',
@@ -1077,7 +1077,7 @@ class SubjectsData {
         id: 'sc-svt',
         name: 'SVT — le vivant',
         emoji: '🧬',
-        niveau: Niveau.niveau3,
+        niveau: Niveau.all,
         questions: [
           Question(
             id: 's-svt-1',

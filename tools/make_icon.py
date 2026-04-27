@@ -62,13 +62,13 @@ def rounded_mask(size: int, radius: int) -> Image.Image:
 
 
 def make_bg(size: int) -> Image.Image:
-    """Dégradé diagonal lavande clair → violet plus saturé pour faire
-    ressortir le BQ avec gradient (sinon trop pâle sur fond clair)."""
+    """Dégradé diagonal exactement aligné avec AppColors.bgGradient
+    (Color(0xFFE9D5FF), 0xFFD9C2FF, 0xFFB8A8FF)."""
     img = Image.new("RGB", (size, size), LAVENDER)
     px = img.load()
-    c1 = (217, 194, 255)   # #D9C2FF — lavande clair
-    c2 = (184, 168, 255)   # #B8A8FF — lavande300
-    c3 = (155, 127, 232)   # #9B7FE8 — lavande400 (plus saturé)
+    c1 = (233, 213, 255)   # #E9D5FF — lavande très clair
+    c2 = (217, 194, 255)   # #D9C2FF
+    c3 = (184, 168, 255)   # #B8A8FF — lavande300
     for y in range(size):
         for x in range(size):
             t = (x + y) / (2 * size)

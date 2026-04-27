@@ -8,6 +8,7 @@ import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/bq_colors.dart';
+import '../theme/theme_scope.dart';
 import '../widgets/pill_button.dart';
 
 /// Écran de fin de partie — score, XP, badges débloqués, level-up.
@@ -62,6 +63,7 @@ class _ResultScreenState extends State<ResultScreen>
 
   @override
   Widget build(BuildContext context) {
+    ThemeScope.of(context);
     final double accuracy =
         widget.answered == 0 ? 0 : widget.correct / widget.answered;
     final String mood = switch (accuracy) {

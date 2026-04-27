@@ -11,6 +11,7 @@ import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/bq_colors.dart';
+import '../theme/theme_scope.dart';
 import '../widgets/pill_button.dart';
 import 'result_screen.dart';
 
@@ -182,6 +183,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeScope.of(context);
     final double pct = _remaining / widget.totalSeconds;
     return Scaffold(
       resizeToAvoidBottomInset: true,

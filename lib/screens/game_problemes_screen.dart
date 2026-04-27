@@ -11,6 +11,7 @@ import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/bq_colors.dart';
+import '../theme/theme_scope.dart';
 import '../widgets/pill_button.dart';
 import '../widgets/probleme_schema_view.dart';
 import 'result_screen.dart';
@@ -150,6 +151,7 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeScope.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(

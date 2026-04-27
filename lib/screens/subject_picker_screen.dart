@@ -8,6 +8,7 @@ import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/bq_colors.dart';
+import '../theme/theme_scope.dart';
 import '../widgets/pill_button.dart';
 import 'chapter_picker_screen.dart';
 
@@ -17,6 +18,7 @@ class SubjectPickerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeScope.of(context);
     final List<Subject> subjects = SubjectsData.all;
     return Scaffold(
       body: Container(

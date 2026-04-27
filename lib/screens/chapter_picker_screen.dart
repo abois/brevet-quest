@@ -8,6 +8,7 @@ import '../models/subject.dart';
 import '../services/preferences_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/bq_colors.dart';
+import '../theme/theme_scope.dart';
 import '../widgets/pill_button.dart';
 import 'game_qcm_screen.dart';
 
@@ -19,6 +20,7 @@ class ChapterPickerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeScope.of(context);
     final Niveau niveau = PreferencesService.instance.niveau;
     final List<Chapter> visible = <Chapter>[
       for (final Chapter c in subject.chapters)

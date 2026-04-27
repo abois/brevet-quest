@@ -7,6 +7,7 @@ import 'services/preferences_service.dart';
 import 'services/progress_service.dart';
 import 'services/theme_service.dart';
 import 'theme/app_theme.dart';
+import 'theme/theme_scope.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,15 +61,18 @@ class _BrevetQuestAppState extends State<BrevetQuestApp>
 
   @override
   Widget build(BuildContext context) {
-    // L'AnimatedBuilder écoute ThemeService au plus haut niveau pour que
-    // tout l'arbre (y compris les écrans de jeu et les routes en pile)
-    // reconstruise quand l'utilisateur change de thème.
+    // ThemeScope est placé via `builder` pour qu'il englobe les écrans
+    // poussés par Navigator (sinon les routes en pile gardent leur
+    // ancien thème). Tout écran qui appelle ThemeScope.of(context)
+    // dans son build sera rebuild au changement de thème.
     return AnimatedBuilder(
       animation: ThemeService.instance,
       builder: (BuildContext _, _) => MaterialApp(
         title: 'Brevet Quest',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),
+        builder: (BuildContext _, Widget? child) =>
+            ThemeScope(child: child ?? const SizedBox.shrink()),
         home: const HomeScreen(),
       ),
     );

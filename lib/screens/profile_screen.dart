@@ -11,6 +11,7 @@ import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/bq_colors.dart';
+import '../theme/theme_scope.dart';
 import '../theme/theme_preset.dart';
 import '../widgets/pill_button.dart';
 
@@ -20,6 +21,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeScope.of(context);
     return Scaffold(
       body: AnimatedBuilder(
         animation: Listenable.merge(<Listenable>[

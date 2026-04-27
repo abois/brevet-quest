@@ -299,25 +299,30 @@ class _NiveauSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Niveau current = PreferencesService.instance.niveau;
-    return Row(
-      children: <Widget>[
-        for (final Niveau n in Niveau.values)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: _SelectorChip(
-                key: ValueKey<String>('niveau-${n.id}'),
-                label: n.label,
-                selected: current == n,
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  PreferencesService.instance.setNiveau(n);
-                },
+    return AnimatedBuilder(
+      animation: PreferencesService.instance,
+      builder: (BuildContext ctx, _) {
+        final Niveau current = PreferencesService.instance.niveau;
+        return Row(
+          children: <Widget>[
+            for (final Niveau n in Niveau.values)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: _SelectorChip(
+                    key: ValueKey<String>('niveau-${n.id}'),
+                    label: n.label,
+                    selected: current == n,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      PreferencesService.instance.setNiveau(n);
+                    },
+                  ),
+                ),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

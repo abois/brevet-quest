@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'bq_colors.dart';
+
 /// Palette Y2K violet/lavande — `Indices` (mode ado 14+).
 class AppColors {
   const AppColors._();
@@ -87,45 +89,47 @@ class AppTheme {
   }
 }
 
-/// Helpers de typographie cohérente pour `Indices`.
+/// Helpers de typographie cohérente — couleurs liées au thème courant
+/// via `Bq.*`. Getters non-const, recalculés à chaque build pour qu'un
+/// changement de thème (notamment dark) actualise les textes.
 class AppText {
   const AppText._();
 
-  static TextStyle display = GoogleFonts.quicksand(
-    fontSize: 32,
-    fontWeight: FontWeight.w900,
-    color: AppColors.plumDark,
-    letterSpacing: 0.5,
-  );
+  static TextStyle get display => GoogleFonts.quicksand(
+        fontSize: 32,
+        fontWeight: FontWeight.w900,
+        color: Bq.textOnBg,
+        letterSpacing: 0.5,
+      );
 
-  static TextStyle title = GoogleFonts.quicksand(
-    fontSize: 22,
-    fontWeight: FontWeight.w900,
-    color: AppColors.plumDark,
-  );
+  static TextStyle get title => GoogleFonts.quicksand(
+        fontSize: 22,
+        fontWeight: FontWeight.w900,
+        color: Bq.textOnBg,
+      );
 
-  static TextStyle subtitle = GoogleFonts.quicksand(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    color: AppColors.violet,
-    letterSpacing: 0.3,
-  );
+  static TextStyle get subtitle => GoogleFonts.quicksand(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: Bq.accent,
+        letterSpacing: 0.3,
+      );
 
-  static TextStyle body = GoogleFonts.quicksand(
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: AppColors.plumDark,
-    height: 1.4,
-  );
+  static TextStyle get body => GoogleFonts.quicksand(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Bq.textOnBg,
+        height: 1.4,
+      );
 
-  static TextStyle pill = GoogleFonts.quicksand(
-    fontSize: 11,
-    fontWeight: FontWeight.w900,
-    letterSpacing: 0.5,
-  );
+  static TextStyle get pill => GoogleFonts.quicksand(
+        fontSize: 11,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 0.5,
+      );
 
-  static TextStyle tag = GoogleFonts.quicksand(
-    fontSize: 10,
-    fontWeight: FontWeight.w700,
-  );
+  static TextStyle get tag => GoogleFonts.quicksand(
+        fontSize: 10,
+        fontWeight: FontWeight.w700,
+      );
 }

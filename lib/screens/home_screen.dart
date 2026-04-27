@@ -217,7 +217,7 @@ class HomeScreen extends StatelessWidget {
                               color: Bq.pillBg,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.85),
+                                color: Bq.cardBg,
                                 width: 1.5,
                               ),
                             ),
@@ -290,7 +290,7 @@ class _StatsCard extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.85),
+          color: Bq.cardBg,
           width: 2,
         ),
         boxShadow: <BoxShadow>[
@@ -310,7 +310,7 @@ class _StatsCard extends StatelessWidget {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.85),
+                  color: Bq.cardBg,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 3),
                 ),
@@ -407,7 +407,7 @@ class _StreakChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Bq.cardBg,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -440,7 +440,7 @@ class _FreezeChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.85),
+        color: Bq.cardBg,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -501,7 +501,7 @@ class _StatPill extends StatelessWidget {
               style: GoogleFonts.quicksand(
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
-                color: Colors.white.withValues(alpha: 0.85),
+                color: Bq.cardBg,
               ),
             ),
           ],
@@ -522,10 +522,10 @@ class _QuestsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.92),
+        color: Bq.cardBg,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.85),
+          color: Bq.cardBg,
           width: 2,
         ),
         boxShadow: <BoxShadow>[
@@ -798,7 +798,7 @@ class _GameCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(7),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: Bq.cardBg,
                       shape: BoxShape.circle,
                     ),
                     child: const Text('▶',
@@ -881,7 +881,7 @@ class _ProfileChip extends StatelessWidget {
             color: Bq.cardBg,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: Bq.cardBg,
               width: 1.5,
             ),
           ),
@@ -931,7 +931,7 @@ class _NiveauPill extends StatelessWidget {
             color: Bq.pillBg,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: Bq.cardBg,
               width: 1,
             ),
           ),

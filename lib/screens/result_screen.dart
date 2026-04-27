@@ -420,7 +420,7 @@ class _ActionButton extends StatelessWidget {
             color: primary ? Bq.accent : Bq.cardBg,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: Bq.cardBg,
               width: 2,
             ),
           ),

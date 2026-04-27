@@ -205,7 +205,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.85),
+                        color: Bq.cardBg,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
@@ -266,7 +266,7 @@ class _GameCalcScreenState extends State<GameCalcScreen> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 24, vertical: 28),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.95),
+                    color: Bq.cardBg,
                     borderRadius: BorderRadius.circular(28),
                     border: Border.all(color: Colors.white, width: 3),
                     boxShadow: <BoxShadow>[

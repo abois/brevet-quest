@@ -229,7 +229,7 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.85),
+                        color: Bq.cardBg,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
@@ -339,7 +339,7 @@ class _PlayBox extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.95),
+            color: Bq.cardBg,
             borderRadius: BorderRadius.circular(22),
             border: Border.all(
               color: canPlay

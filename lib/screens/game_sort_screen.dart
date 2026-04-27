@@ -155,7 +155,7 @@ class _GameSortScreenState extends State<GameSortScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.85),
+                        color: Bq.cardBg,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -346,7 +346,7 @@ class _Bank extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 64),
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.85),
+            color: Bq.cardBg,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: Bq.accent.withValues(alpha: 0.3),

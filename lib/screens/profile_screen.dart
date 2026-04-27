@@ -498,7 +498,7 @@ class _ThemeChip extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: Bq.cardBg,
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.lock, size: 12),
@@ -524,7 +524,7 @@ class _DangerZone extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.85),
+            color: Bq.cardBg,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.danger, width: 1.5),
           ),

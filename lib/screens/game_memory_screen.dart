@@ -202,7 +202,7 @@ class _GameMemoryScreenState extends State<GameMemoryScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.85),
+                        color: Bq.cardBg,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -227,7 +227,7 @@ class _GameMemoryScreenState extends State<GameMemoryScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.85),
+                        color: Bq.cardBg,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(

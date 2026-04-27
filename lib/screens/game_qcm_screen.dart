@@ -237,7 +237,7 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.95),
+                    color: Bq.cardBg,
                     borderRadius: BorderRadius.circular(22),
                     border: Border.all(color: Colors.white, width: 2),
                     boxShadow: <BoxShadow>[
@@ -320,7 +320,7 @@ class _Header extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: Bq.cardBg,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(

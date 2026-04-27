@@ -277,7 +277,7 @@ class _Header extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: Bq.cardBg,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
@@ -544,7 +544,7 @@ class _ActionPad extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.95),
+            color: Bq.cardBg,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: color, width: 2),
           ),

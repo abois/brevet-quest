@@ -16,6 +16,7 @@ import '../theme/theme_preset.dart';
 import '../widgets/audio_toggle.dart';
 import 'game_calc_screen.dart';
 import 'game_dictee_screen.dart';
+import 'game_brevet_screen.dart';
 import 'game_intrus_screen.dart';
 import 'game_memory_screen.dart';
 import 'game_pendu_screen.dart';
@@ -195,6 +196,15 @@ class HomeScreen extends StatelessWidget {
                       kind: _GameKind.problemes,
                       rotation: -0.013,
                     ),
+                    const SizedBox(height: 10),
+                    const _GameCard(
+                      emoji: '📜',
+                      title: 'Brevet Blanc',
+                      subtitle: 'Sujet complet · note /20 · XP ×2',
+                      tags: <String>['#brevet', '#officiel'],
+                      kind: _GameKind.brevet,
+                      rotation: 0.012,
+                    ),
                     const SizedBox(height: 18),
                     Center(
                       child: Material(
@@ -271,6 +281,7 @@ enum _GameKind {
   intrus,
   pendu,
   problemes,
+  brevet,
 }
 
 class _StatsCard extends StatelessWidget {
@@ -828,6 +839,7 @@ class _GameCard extends StatelessWidget {
       _GameKind.intrus => const GameIntrusScreen(),
       _GameKind.pendu => const GamePenduScreen(),
       _GameKind.problemes => const GameProblemesScreen(),
+      _GameKind.brevet => const GameBrevetScreen(),
     };
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => screen));
   }

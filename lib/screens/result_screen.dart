@@ -7,6 +7,7 @@ import '../services/audio_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../widgets/pill_button.dart';
 
 /// Écran de fin de partie — score, XP, badges débloqués, level-up.
@@ -90,9 +91,11 @@ class _ResultScreenState extends State<ResultScreen>
                   ],
                 ),
                 const SizedBox(height: 18),
-                Text(widget.title, style: AppText.title),
+                Text(widget.title,
+                    style: AppText.title.copyWith(color: Bq.textOnBg)),
                 const SizedBox(height: 6),
-                Text(mood, style: AppText.subtitle),
+                Text(mood,
+                    style: AppText.subtitle.copyWith(color: Bq.accent)),
                 const SizedBox(height: 24),
                 _ScoreRing(
                   correct: widget.correct,
@@ -108,7 +111,8 @@ class _ResultScreenState extends State<ResultScreen>
                   _LevelUpBanner(level: widget.record.newLevel),
                 if (widget.record.newlyCompletedQuests.isNotEmpty) ...<Widget>[
                   const SizedBox(height: 14),
-                  Text('quêtes complétées ✿', style: AppText.subtitle),
+                  Text('quêtes complétées ✿',
+                      style: AppText.subtitle.copyWith(color: Bq.accent)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -127,7 +131,7 @@ class _ResultScreenState extends State<ResultScreen>
                   const SizedBox(height: 14),
                   Text(
                     'badges débloqués ✿',
-                    style: AppText.subtitle,
+                    style: AppText.subtitle.copyWith(color: Bq.accent),
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -197,8 +201,7 @@ class _ScoreRing extends StatelessWidget {
               value: pct,
               strokeWidth: 14,
               backgroundColor: Colors.white.withValues(alpha: 0.4),
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(AppColors.violet),
+              valueColor: AlwaysStoppedAnimation<Color>(Bq.accent),
             ),
           ),
           Column(
@@ -209,7 +212,7 @@ class _ScoreRing extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                   fontSize: 30,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.plumDark,
+                  color: Bq.textOnBg,
                 ),
               ),
               Text(
@@ -217,7 +220,7 @@ class _ScoreRing extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.violet,
+                  color: Bq.accent,
                 ),
               ),
             ],
@@ -280,9 +283,9 @@ class _LevelUpBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Bq.cardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.violet, width: 2),
+        border: Border.all(color: Bq.accent, width: 2),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -294,7 +297,7 @@ class _LevelUpBanner extends StatelessWidget {
             style: GoogleFonts.quicksand(
               fontSize: 14,
               fontWeight: FontWeight.w900,
-              color: AppColors.violet,
+              color: Bq.accent,
             ),
           ),
         ],
@@ -348,6 +351,7 @@ class _QuestPill extends StatelessWidget {
               ),
             ),
           ),
+          // (Quest pill : couleurs fixes — gradient or/rose intentionnel)
         ],
       ),
     );
@@ -364,10 +368,10 @@ class _BadgePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Bq.cardBg,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-            color: AppColors.violet.withValues(alpha: 0.4), width: 1.5),
+            color: Bq.accent.withValues(alpha: 0.4), width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -379,7 +383,7 @@ class _BadgePill extends StatelessWidget {
             style: GoogleFonts.quicksand(
               fontSize: 12,
               fontWeight: FontWeight.w900,
-              color: AppColors.plumDark,
+              color: Bq.textOnBg,
             ),
           ),
         ],
@@ -411,7 +415,7 @@ class _ActionButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: primary ? AppColors.violet : AppColors.glassSoft,
+            color: primary ? Bq.accent : Bq.cardBg,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.85),
@@ -423,7 +427,7 @@ class _ActionButton extends StatelessWidget {
             style: GoogleFonts.quicksand(
               fontSize: 15,
               fontWeight: FontWeight.w900,
-              color: primary ? Colors.white : AppColors.plumDark,
+              color: primary ? Colors.white : Bq.textOnBg,
             ),
           ),
         ),

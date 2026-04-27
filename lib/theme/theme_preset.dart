@@ -85,7 +85,44 @@ class ThemePreset {
     unlockLevel: 0,
   );
 
-  /// Rose néon — débloqué niveau 5.
+  /// Bleu cosmos — débloqué niveau 5.
+  static const ThemePreset bleu = ThemePreset(
+    id: 'bleu',
+    name: 'Bleu Cosmos',
+    emoji: '🔷',
+    bgGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: <Color>[
+        Color(0xFFDDEBFF),
+        Color(0xFFB6CFFF),
+        Color(0xFF8FB1FF),
+      ],
+    ),
+    bgGradientSoft: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: <Color>[Color(0xFFDDEBFF), Color(0xFFF0F6FF)],
+    ),
+    statsGradient: <Color>[Color(0xFF8FB1FF), Color(0xFF2D5BA9)],
+    accent: Color(0xFF2D5BA9),
+    accentDeep: Color(0xFF14305F),
+    cardBg: Color(0xF2FFFFFF),
+    cardBorder: Color(0xFFFFFFFF),
+    pillBg: Color(0xD9FFFFFF),
+    pillFg: Color(0xFF2D5BA9),
+    titleGradient: <Color>[
+      Color(0xFF14305F),
+      Color(0xFF2D5BA9),
+      Color(0xFF5BB4F0),
+      Color(0xFF2D5BA9),
+    ],
+    sparkleColor: Color(0xFFFFFFFF),
+    textOnBg: Color(0xFF0F1F3A),
+    unlockLevel: 5,
+  );
+
+  /// Rose néon — débloqué niveau 10.
   static const ThemePreset rose = ThemePreset(
     id: 'rose',
     name: 'Rose Néon',
@@ -119,10 +156,10 @@ class ThemePreset {
     ],
     sparkleColor: Color(0xFFFFFFFF),
     textOnBg: Color(0xFF3A0F22),
-    unlockLevel: 5,
+    unlockLevel: 10,
   );
 
-  /// Mint — débloqué niveau 10.
+  /// Mint — débloqué niveau 15.
   static const ThemePreset mint = ThemePreset(
     id: 'mint',
     name: 'Mint',
@@ -156,10 +193,10 @@ class ThemePreset {
     ],
     sparkleColor: Color(0xFFFFFFFF),
     textOnBg: Color(0xFF0E2A1F),
-    unlockLevel: 10,
+    unlockLevel: 15,
   );
 
-  /// Dark mode — débloqué niveau 15.
+  /// Dark mode — débloqué niveau 20.
   static const ThemePreset dark = ThemePreset(
     id: 'dark',
     name: 'Dark',
@@ -193,11 +230,13 @@ class ThemePreset {
     ],
     sparkleColor: Color(0xFFFFD466),
     textOnBg: Color(0xFFF6F0FF),
-    unlockLevel: 15,
+    unlockLevel: 20,
     isDark: true,
   );
 
-  static const List<ThemePreset> all = <ThemePreset>[violet, rose, mint, dark];
+  static const List<ThemePreset> all = <ThemePreset>[
+    violet, bleu, rose, mint, dark,
+  ];
 
   static ThemePreset byId(String id) {
     for (final ThemePreset p in all) {

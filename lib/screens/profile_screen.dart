@@ -10,6 +10,7 @@ import '../services/preferences_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../theme/theme_preset.dart';
 import '../widgets/pill_button.dart';
 
@@ -105,7 +106,7 @@ class _SectionTitle extends StatelessWidget {
       style: GoogleFonts.quicksand(
         fontSize: 13,
         fontWeight: FontWeight.w900,
-        color: AppColors.violet,
+        color: Bq.accent,
         letterSpacing: 1.0,
       ),
     );
@@ -152,7 +153,7 @@ class _BadgeChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: unlocked
-              ? AppColors.violet.withValues(alpha: 0.5)
+              ? Bq.accent.withValues(alpha: 0.5)
               : Colors.white.withValues(alpha: 0.6),
           width: 1.5,
         ),
@@ -174,8 +175,8 @@ class _BadgeChip extends StatelessWidget {
               fontSize: 11,
               fontWeight: FontWeight.w900,
               color: unlocked
-                  ? AppColors.plumDark
-                  : AppColors.plumDark.withValues(alpha: 0.55),
+                  ? Bq.textOnBg
+                  : Bq.textOnBg.withValues(alpha: 0.55),
             ),
           ),
         ],
@@ -261,7 +262,7 @@ class _SubjectXpRow extends StatelessWidget {
                       style: GoogleFonts.quicksand(
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.plumDark,
+                        color: Bq.textOnBg,
                       ),
                     ),
                   ),
@@ -270,7 +271,7 @@ class _SubjectXpRow extends StatelessWidget {
                     style: GoogleFonts.quicksand(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.violet,
+                      color: Bq.accent,
                     ),
                   ),
                 ],
@@ -282,7 +283,7 @@ class _SubjectXpRow extends StatelessWidget {
                   value: pct,
                   minHeight: 5,
                   backgroundColor:
-                      AppColors.violet.withValues(alpha: 0.12),
+                      Bq.accent.withValues(alpha: 0.12),
                   valueColor: AlwaysStoppedAnimation<Color>(subject.color),
                 ),
               ),
@@ -393,7 +394,7 @@ class _SelectorChip extends StatelessWidget {
             style: GoogleFonts.quicksand(
               fontSize: 14,
               fontWeight: FontWeight.w900,
-              color: selected ? Colors.white : AppColors.plumDark,
+              color: selected ? Colors.white : Bq.textOnBg,
             ),
           ),
         ),
@@ -419,7 +420,7 @@ class _ThemeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color textColor =
-        preset.isDark ? Colors.white : AppColors.plumDark;
+        preset.isDark ? Colors.white : Bq.textOnBg;
     return Opacity(
       opacity: unlocked ? 1.0 : 0.55,
       child: Material(
@@ -554,13 +555,13 @@ class _DangerZone extends StatelessWidget {
           'Tout effacer ?',
           style: GoogleFonts.quicksand(
             fontWeight: FontWeight.w900,
-            color: AppColors.plumDark,
+            color: Bq.textOnBg,
           ),
         ),
         content: Text(
           'XP, niveau, badges, streak et quêtes seront remis à zéro. '
           'Le thème reste celui sélectionné.',
-          style: GoogleFonts.quicksand(color: AppColors.plumDark),
+          style: GoogleFonts.quicksand(color: Bq.textOnBg),
         ),
         actions: <Widget>[
           TextButton(

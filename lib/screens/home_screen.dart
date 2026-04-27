@@ -10,6 +10,7 @@ import '../services/preferences_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/bq_colors.dart';
 import '../theme/theme_preset.dart';
 import '../widgets/audio_toggle.dart';
 import 'game_calc_screen.dart';
@@ -75,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                           style: GoogleFonts.quicksand(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.violetDeep
+                            color: Bq.accentDeep
                                 .withValues(alpha: 0.85),
                             letterSpacing: 1.5,
                           ),
@@ -211,7 +212,7 @@ class HomeScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 18, vertical: 12),
                             decoration: BoxDecoration(
-                              color: AppColors.glassSoft,
+                              color: Bq.pillBg,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: Colors.white.withValues(alpha: 0.85),
@@ -229,7 +230,7 @@ class HomeScreen extends StatelessWidget {
                                   style: GoogleFonts.quicksand(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w900,
-                                    color: AppColors.violet,
+                                    color: Bq.accent,
                                   ),
                                 ),
                                 const SizedBox(width: 6),
@@ -292,7 +293,7 @@ class _StatsCard extends StatelessWidget {
         ),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: AppColors.violet.withValues(alpha: 0.30),
+            color: Bq.accent.withValues(alpha: 0.30),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -317,7 +318,7 @@ class _StatsCard extends StatelessWidget {
                   style: GoogleFonts.quicksand(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.violetDeep,
+                    color: Bq.accentDeep,
                   ),
                 ),
               ),
@@ -450,7 +451,7 @@ class _FreezeChip extends StatelessWidget {
             style: GoogleFonts.quicksand(
               fontSize: 11,
               fontWeight: FontWeight.w900,
-              color: AppColors.violetDeep,
+              color: Bq.accentDeep,
             ),
           ),
         ],
@@ -527,7 +528,7 @@ class _QuestsCard extends StatelessWidget {
         ),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: AppColors.violet.withValues(alpha: 0.16),
+            color: Bq.accent.withValues(alpha: 0.16),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -547,7 +548,7 @@ class _QuestsCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: AppColors.lavender100,
+                  color: Bq.cardBg,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -555,7 +556,7 @@ class _QuestsCard extends StatelessWidget {
                   style: GoogleFonts.quicksand(
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.violetDeep,
+                    color: Bq.accentDeep,
                   ),
                 ),
               ),
@@ -600,7 +601,7 @@ class _QuestRow extends StatelessWidget {
           height: 36,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: done ? AppColors.success : AppColors.lavender100,
+            color: done ? AppColors.success : Bq.cardBg,
             shape: BoxShape.circle,
           ),
           child: Text(
@@ -627,7 +628,7 @@ class _QuestRow extends StatelessWidget {
                         fontWeight: FontWeight.w900,
                         color: done
                             ? AppColors.successDark
-                            : AppColors.plumDark,
+                            : Bq.textOnBg,
                         decoration: done ? TextDecoration.lineThrough : null,
                       ),
                     ),
@@ -652,9 +653,9 @@ class _QuestRow extends StatelessWidget {
                         value: pct,
                         minHeight: 5,
                         backgroundColor:
-                            AppColors.violet.withValues(alpha: 0.12),
+                            Bq.accent.withValues(alpha: 0.12),
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          done ? AppColors.successDark : AppColors.violet,
+                          done ? AppColors.successDark : Bq.accent,
                         ),
                       ),
                     ),
@@ -665,7 +666,7 @@ class _QuestRow extends StatelessWidget {
                     style: GoogleFonts.quicksand(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.plumDark.withValues(alpha: 0.7),
+                      color: Bq.textOnBg.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -700,7 +701,7 @@ class _GameCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemePreset theme = ThemeService.instance.preset;
-    final Color textColor = theme.isDark ? Colors.white : AppColors.plumDark;
+    final Color textColor = theme.isDark ? Colors.white : Bq.textOnBg;
     final List<Color> gradient = featured
         ? theme.statsGradient
         : <Color>[
@@ -879,7 +880,7 @@ class _ProfileChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: AppColors.glass,
+            color: Bq.cardBg,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.85),
@@ -896,7 +897,7 @@ class _ProfileChip extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.violet,
+                  color: Bq.accent,
                 ),
               ),
             ],
@@ -929,7 +930,7 @@ class _NiveauPill extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.glassSoft,
+            color: Bq.pillBg,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.85),
@@ -941,7 +942,7 @@ class _NiveauPill extends StatelessWidget {
             style: GoogleFonts.quicksand(
               fontSize: 11,
               fontWeight: FontWeight.w900,
-              color: AppColors.violetDeep,
+              color: Bq.accentDeep,
             ),
           ),
         ),

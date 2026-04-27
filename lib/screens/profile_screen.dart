@@ -350,7 +350,25 @@ class _ThemeSelector extends StatelessWidget {
             unlocked: p.isUnlocked(level),
             onTap: () {
               HapticFeedback.selectionClick();
-              ThemeService.instance.setPreset(p);
+              if (p.isUnlocked(level)) {
+                ThemeService.instance.setPreset(p);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Bq.accentDeep,
+                    duration: const Duration(seconds: 2),
+                    content: Text(
+                      '${p.emoji} ${p.name} se débloque au niveau ${p.unlockLevel} '
+                      '(tu es niveau $level).',
+                      style: GoogleFonts.quicksand(
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                );
+              }
             },
           ),
       ],

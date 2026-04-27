@@ -239,7 +239,7 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   if (p.schema != null) ...<Widget>[
-                    ProblemeSchemaView(schema: p.schema!),
+                    ProblemeSchemaView(schema: p.schema!, emoji: p.emoji),
                     const SizedBox(height: 14),
                   ],
                   Container(

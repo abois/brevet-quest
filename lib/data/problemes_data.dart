@@ -77,6 +77,31 @@ class CylinderSchema extends ProblemeSchema {
   final String? height;
 }
 
+/// Scène illustrée (option B) — un dessin contextuel complet, par opposition
+/// aux schémas géométriques génériques. `kind` désigne la scène à peindre,
+/// `labels` les étiquettes à afficher dessus.
+enum IllustratedKind {
+  ladderWall,    // échelle contre mur — Pythagore
+  pylon,         // pylône + câble hauban — Pythagore
+  sail,          // voile triangulaire sur mât — Thalès
+  cableCar,      // câble de télésiège incliné — Trigo
+  roof,          // toit (triangle isocèle) — Trigo / Aire
+  pizza,         // disque ; thème pizza — Aire
+  pool,          // bassin circulaire vu de dessus — Aire
+  tank,          // cuve cylindrique — Volume
+  crate,         // pavé en perspective ; thème caisse — Volume
+  field,         // terrain rectangulaire vu en plan — Aire / Pythagore
+}
+
+class IllustratedSchema extends ProblemeSchema {
+  const IllustratedSchema({
+    required this.kind,
+    this.labels = const <String, String>{},
+  });
+  final IllustratedKind kind;
+  final Map<String, String> labels;
+}
+
 class Probleme {
   const Probleme({
     required this.id,
@@ -88,6 +113,7 @@ class Probleme {
     required this.explanation,
     required this.niveau,
     this.schema,
+    this.emoji,
   });
 
   final String id;
@@ -99,6 +125,9 @@ class Probleme {
   final String explanation;
   final Niveau niveau;
   final ProblemeSchema? schema;
+
+  /// Emoji décoratif affiché en coin du schéma (option A légère).
+  final String? emoji;
 }
 
 class ProblemesData {
@@ -116,6 +145,7 @@ class ProblemesData {
       unit: 'm',
       explanation: 'Hyp² = 3² + 4² = 9 + 16 = 25, donc hyp = 5 m.',
       niveau: Niveau.niveau4,
+      emoji: '🪚',
       schema: RightTriangleSchema(legA: '3', legB: '4', hypo: '?'),
     ),
     Probleme(
@@ -128,7 +158,11 @@ class ProblemesData {
       unit: 'm',
       explanation: 'L² = 12² + 5² = 144 + 25 = 169, donc L = 13 m.',
       niveau: Niveau.niveau4,
-      schema: RightTriangleSchema(legA: '5', legB: '12', hypo: '?'),
+      emoji: '⚡',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.pylon,
+        labels: <String, String>{'base': '5', 'mast': '12', 'cable': '?'},
+      ),
     ),
     Probleme(
       id: 'pyt-3',
@@ -140,7 +174,11 @@ class ProblemesData {
       unit: 'm',
       explanation: '8² + 15² = 64 + 225 = 289 = 17². La diagonale mesure 17 m.',
       niveau: Niveau.niveau4,
-      schema: RightTriangleSchema(legA: '8', legB: '15', hypo: '?'),
+      emoji: '🌳',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.field,
+        labels: <String, String>{'width': '15', 'height': '8', 'diag': '?'},
+      ),
     ),
     Probleme(
       id: 'pyt-4',
@@ -164,7 +202,11 @@ class ProblemesData {
       unit: 'm',
       explanation: 'h² = 5² − 3² = 25 − 9 = 16, donc h = 4 m.',
       niveau: Niveau.niveau4,
-      schema: RightTriangleSchema(legA: '3', legB: '?', hypo: '5'),
+      emoji: '🪜',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.ladderWall,
+        labels: <String, String>{'base': '3', 'height': '?', 'ladder': '5'},
+      ),
     ),
     Probleme(
       id: 'pyt-6',
@@ -214,7 +256,11 @@ class ProblemesData {
       unit: 'm',
       explanation: 'DE/BC = AD/AB, donc DE = 15 × 4/10 = 6 m.',
       niveau: Niveau.niveau4,
-      schema: ThalesSchema(ad: '4', ab: '10', bc: '15', de: '?'),
+      emoji: '⛵',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.sail,
+        labels: <String, String>{'ad': '4', 'ab': '10', 'bc': '15', 'de': '?'},
+      ),
     ),
     Probleme(
       id: 'tha-2',
@@ -287,10 +333,10 @@ class ProblemesData {
       unit: 'm',
       explanation: 'cos(60°) = adj/hyp = 5/hyp = 0,5, donc hyp = 10 m.',
       niveau: Niveau.niveau3,
-      schema: RightTriangleTrigSchema(
-        angleLabel: '60°',
-        adjacent: '5',
-        hypotenuse: '?',
+      emoji: '🚡',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.cableCar,
+        labels: <String, String>{'angle': '60°', 'base': '5', 'cable': '?'},
       ),
     ),
     Probleme(
@@ -303,10 +349,10 @@ class ProblemesData {
       unit: 'm',
       explanation: 'sin(30°) = opposé/12 = 0,5, donc opp = 6 m.',
       niveau: Niveau.niveau3,
-      schema: RightTriangleTrigSchema(
-        angleLabel: '30°',
-        opposite: '?',
-        hypotenuse: '12',
+      emoji: '🏠',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.roof,
+        labels: <String, String>{'angle': '30°', 'rafter': '12', 'height': '?'},
       ),
     ),
     Probleme(
@@ -404,7 +450,11 @@ class ProblemesData {
       unit: 'cm²',
       explanation: 'Aire = π × r² = 3,14 × 25 = 78,5 cm².',
       niveau: Niveau.niveau4,
-      schema: CircleSchema(radius: '5'),
+      emoji: '🍕',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.pizza,
+        labels: <String, String>{'radius': '5'},
+      ),
     ),
     Probleme(
       id: 'air-4',
@@ -489,7 +539,11 @@ class ProblemesData {
       unit: 'L',
       explanation: 'V = π × r² × h = 3,14 × 9 × 10 = 282,6 dm³ = 282,6 L.',
       niveau: Niveau.niveau3,
-      schema: CylinderSchema(radius: '3', height: '10'),
+      emoji: '💧',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.tank,
+        labels: <String, String>{'radius': '3', 'height': '10'},
+      ),
     ),
     Probleme(
       id: 'vol-4',
@@ -888,7 +942,11 @@ class ProblemesData {
       unit: 'm²',
       explanation: 'Aire = π × 100 = 314 m².',
       niveau: Niveau.niveau4,
-      schema: CircleSchema(radius: '10'),
+      emoji: '🏊',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.pool,
+        labels: <String, String>{'radius': '10'},
+      ),
     ),
     Probleme(
       id: 'air-9',
@@ -925,7 +983,11 @@ class ProblemesData {
       unit: 'L',
       explanation: 'V = 10 × 6 × 4 = 240 dm³ = 240 L.',
       niveau: Niveau.niveau3,
-      schema: CuboidSchema(length: '10', width: '6', height: '4'),
+      emoji: '📦',
+      schema: IllustratedSchema(
+        kind: IllustratedKind.crate,
+        labels: <String, String>{'length': '10', 'width': '6', 'height': '4'},
+      ),
     ),
     Probleme(
       id: 'vol-7',

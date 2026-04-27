@@ -6,11 +6,13 @@ import 'package:google_fonts/google_fonts.dart';
 import '../data/problemes_data.dart';
 import '../theme/app_theme.dart';
 
-/// Vue d'un schéma géométrique pour illustrer un problème.
+/// Vue d'un schéma géométrique pour illustrer un problème. Affiche
+/// optionnellement un emoji décoratif en haut-droite (option A légère).
 class ProblemeSchemaView extends StatelessWidget {
-  const ProblemeSchemaView({super.key, required this.schema});
+  const ProblemeSchemaView({super.key, required this.schema, this.emoji});
 
   final ProblemeSchema schema;
+  final String? emoji;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +28,18 @@ class ProblemeSchemaView extends StatelessWidget {
           ),
         ),
         padding: const EdgeInsets.all(14),
-        child: CustomPaint(
-          painter: _SchemaPainter(schema: schema),
+        child: Stack(
+          children: <Widget>[
+            Positioned.fill(
+              child: CustomPaint(painter: _SchemaPainter(schema: schema)),
+            ),
+            if (emoji != null)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Text(emoji!, style: const TextStyle(fontSize: 26)),
+              ),
+          ],
         ),
       ),
     );
@@ -77,6 +89,8 @@ class _SchemaPainter extends CustomPainter {
         _paintCuboid(canvas, size, s);
       case CylinderSchema s:
         _paintCylinder(canvas, size, s);
+      case IllustratedSchema s:
+        _paintIllustrated(canvas, size, s);
     }
   }
 
@@ -470,5 +484,560 @@ class _SchemaPainter extends CustomPainter {
     if (s.height != null) {
       _drawLabel(canvas, s.height!, Offset(top.dx + rx + 16, (top.dy + bottom.dy) / 2));
     }
+  }
+
+  // ────────────── Scènes illustrées (option B) ──────────────
+  void _paintIllustrated(Canvas canvas, Size size, IllustratedSchema s) {
+    switch (s.kind) {
+      case IllustratedKind.ladderWall:
+        _paintLadderWall(canvas, size, s.labels);
+      case IllustratedKind.pylon:
+        _paintPylon(canvas, size, s.labels);
+      case IllustratedKind.sail:
+        _paintSail(canvas, size, s.labels);
+      case IllustratedKind.cableCar:
+        _paintCableCar(canvas, size, s.labels);
+      case IllustratedKind.roof:
+        _paintRoof(canvas, size, s.labels);
+      case IllustratedKind.pizza:
+        _paintPizza(canvas, size, s.labels);
+      case IllustratedKind.pool:
+        _paintPool(canvas, size, s.labels);
+      case IllustratedKind.tank:
+        _paintTank(canvas, size, s.labels);
+      case IllustratedKind.crate:
+        _paintCrate(canvas, size, s.labels);
+      case IllustratedKind.field:
+        _paintField(canvas, size, s.labels);
+    }
+  }
+
+  Paint _paintFill(Color c) =>
+      Paint()..style = PaintingStyle.fill..color = c;
+
+  // Échelle contre mur
+  void _paintLadderWall(Canvas canvas, Size size, Map<String, String> labels) {
+    final double pad = 18;
+    final double groundY = size.height - 28;
+    // Sol
+    canvas.drawRect(
+      Rect.fromLTWH(0, groundY, size.width, size.height - groundY),
+      _paintFill(const Color(0xFFB8E0BC)),
+    );
+    // Mur (briques rosées)
+    final double wallX = size.width * 0.62;
+    final Rect wall = Rect.fromLTRB(wallX, pad, size.width - pad, groundY);
+    canvas.drawRect(wall, _paintFill(const Color(0xFFD2899A)));
+    final Paint mortar = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2
+      ..color = const Color(0xFFB76C82);
+    final double brickH = (groundY - pad) / 7;
+    for (int row = 0; row < 7; row++) {
+      final double y = pad + row * brickH;
+      final double offset = (row % 2) * brickH;
+      for (double x = wallX - offset; x < size.width; x += brickH * 1.6) {
+        canvas.drawRect(
+          Rect.fromLTWH(x, y, brickH * 1.6, brickH),
+          mortar,
+        );
+      }
+    }
+    // Échelle
+    final Offset foot = Offset(wallX - (groundY - pad) * 0.75, groundY);
+    final Offset top = Offset(wallX, groundY - (groundY - pad));
+    final Offset dir = top - foot;
+    final double len = dir.distance;
+    final Offset u = Offset(dir.dx / len, dir.dy / len);
+    final Offset n = Offset(-u.dy, u.dx);
+    const double gap = 7;
+    final Paint ladderPaint = Paint()
+      ..color = AppColors.violetDeep
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+    for (final double sign in <double>[-1, 1]) {
+      canvas.drawLine(foot + n * gap * sign, top + n * gap * sign, ladderPaint);
+    }
+    final Paint rungPaint = Paint()
+      ..color = AppColors.violetDeep
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5;
+    for (int i = 1; i <= 7; i++) {
+      final double t = i / 8;
+      final Offset c = foot + dir * t;
+      canvas.drawLine(c + n * gap, c - n * gap, rungPaint);
+    }
+    // Marqueur d'angle droit
+    canvas.drawRect(
+      Rect.fromLTWH(wallX - 10, groundY - 10, 10, 10),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = AppColors.violetDeep,
+    );
+    // Étiquettes
+    if (labels['base'] != null) {
+      _drawLabelChip(canvas, '${labels['base']} m',
+          Offset((foot.dx + wallX) / 2, groundY + 14));
+    }
+    if (labels['height'] != null) {
+      _drawLabelChip(canvas, '${labels['height']} m',
+          Offset(wallX + 22, (top.dy + groundY) / 2));
+    }
+    if (labels['ladder'] != null) {
+      _drawLabelChip(
+          canvas,
+          '${labels['ladder']} m',
+          Offset((foot.dx + top.dx) / 2 - 30, (foot.dy + top.dy) / 2 - 18),
+          color: AppColors.danger);
+    }
+  }
+
+  // Pylône avec câble hauban
+  void _paintPylon(Canvas canvas, Size size, Map<String, String> labels) {
+    final double groundY = size.height - 24;
+    canvas.drawRect(
+      Rect.fromLTWH(0, groundY, size.width, size.height - groundY),
+      _paintFill(const Color(0xFFB8E0BC)),
+    );
+    final double baseX = size.width * 0.30;
+    final Offset top = Offset(baseX, 26);
+    final Offset bottom = Offset(baseX, groundY);
+    // Pylône (rectangle gris)
+    canvas.drawRect(
+      Rect.fromLTRB(baseX - 6, top.dy, baseX + 6, bottom.dy),
+      _paintFill(const Color(0xFF9B7FE8)),
+    );
+    // Câble hauban
+    final Offset anchor = Offset(size.width - 30, groundY);
+    canvas.drawLine(top, anchor, _stroke);
+    // Marqueur d'angle droit
+    canvas.drawRect(
+      Rect.fromLTWH(baseX, groundY - 10, 10, 10),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = AppColors.violetDeep,
+    );
+    // Étiquettes
+    if (labels['base'] != null) {
+      _drawLabelChip(canvas, '${labels['base']} m',
+          Offset((baseX + anchor.dx) / 2, groundY + 14));
+    }
+    if (labels['mast'] != null) {
+      _drawLabelChip(canvas, '${labels['mast']} m',
+          Offset(baseX - 28, (top.dy + bottom.dy) / 2));
+    }
+    if (labels['cable'] != null) {
+      _drawLabelChip(
+          canvas,
+          '${labels['cable']} m',
+          Offset((top.dx + anchor.dx) / 2, (top.dy + anchor.dy) / 2 - 14),
+          color: AppColors.danger);
+    }
+  }
+
+  // Voile triangulaire sur mât
+  void _paintSail(Canvas canvas, Size size, Map<String, String> labels) {
+    final double groundY = size.height - 18;
+    // Eau
+    canvas.drawRect(
+      Rect.fromLTWH(0, groundY, size.width, size.height - groundY),
+      _paintFill(const Color(0xFF8FCDE5)),
+    );
+    // Bateau (trapèze)
+    final double boatLeft = size.width * 0.20;
+    final double boatRight = size.width * 0.80;
+    final Path boat = Path()
+      ..moveTo(boatLeft, groundY)
+      ..lineTo(boatRight, groundY)
+      ..lineTo(boatRight - 14, groundY + 14)
+      ..lineTo(boatLeft + 14, groundY + 14)
+      ..close();
+    canvas.drawPath(boat, _paintFill(const Color(0xFF7B2D8F)));
+    // Mât AB (vertical)
+    final double mastX = (boatLeft + boatRight) / 2;
+    final Offset a = Offset(mastX, 22);
+    final Offset b = Offset(mastX, groundY);
+    canvas.drawLine(a, b, _stroke);
+    // Voile triangulaire — A en haut, B en bas, C à droite (C = boatRight, groundY)
+    final Offset c = Offset(boatRight - 8, groundY - 4);
+    final Path sail = Path()
+      ..moveTo(a.dx, a.dy)
+      ..lineTo(b.dx, b.dy)
+      ..lineTo(c.dx, c.dy)
+      ..close();
+    canvas.drawPath(sail, _paintFill(const Color(0xFFF6F0FF)));
+    canvas.drawPath(sail, _stroke);
+    // Bout DE parallèle à BC (au tiers)
+    final double t = 0.4;
+    final Offset d = Offset.lerp(a, b, t)!;
+    final Offset e = Offset.lerp(a, c, t)!;
+    canvas.drawLine(d, e, _stroke);
+    // Étiquettes
+    if (labels['ad'] != null) {
+      _drawLabelChip(canvas, '${labels['ad']} m',
+          Offset(a.dx - 22, (a.dy + d.dy) / 2));
+    }
+    if (labels['ab'] != null) {
+      _drawLabelChip(canvas, '${labels['ab']} m',
+          Offset(a.dx - 22, (d.dy + b.dy) / 2));
+    }
+    if (labels['de'] != null) {
+      _drawLabelChip(canvas, '${labels['de']} m',
+          Offset((d.dx + e.dx) / 2, (d.dy + e.dy) / 2 - 14),
+          color: AppColors.danger);
+    }
+    if (labels['bc'] != null) {
+      _drawLabelChip(canvas, '${labels['bc']} m',
+          Offset((b.dx + c.dx) / 2, b.dy - 14));
+    }
+  }
+
+  // Câble de télésiège (pente)
+  void _paintCableCar(Canvas canvas, Size size, Map<String, String> labels) {
+    final double groundY = size.height - 22;
+    canvas.drawRect(
+      Rect.fromLTWH(0, groundY, size.width, size.height - groundY),
+      _paintFill(const Color(0xFFB8E0BC)),
+    );
+    final Offset bottom = Offset(28, groundY);
+    final Offset top = Offset(size.width - 30, 36);
+    // Pylônes verticaux
+    canvas.drawLine(bottom, Offset(bottom.dx, bottom.dy - 30), _stroke);
+    canvas.drawLine(top, Offset(top.dx, top.dy + 30), _stroke);
+    // Triangle implicite : on dessine la base horizontale et la verticale en pointillés
+    canvas.drawLine(
+      bottom,
+      Offset(top.dx, groundY),
+      _dashed,
+    );
+    canvas.drawLine(
+      Offset(top.dx, groundY),
+      top,
+      _dashed,
+    );
+    // Câble du télésiège
+    canvas.drawLine(bottom, top, Paint()
+      ..color = AppColors.violetDeep
+      ..strokeWidth = 3);
+    // Cabine au milieu
+    final Offset cabin = Offset.lerp(bottom, top, 0.5)!;
+    canvas.drawRect(
+      Rect.fromCenter(center: cabin, width: 20, height: 12),
+      _paintFill(AppColors.danger),
+    );
+    // Marqueur d'angle droit en bas-droit
+    canvas.drawRect(
+      Rect.fromLTWH(top.dx - 10, groundY - 10, 10, 10),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = AppColors.violetDeep,
+    );
+    // Arc d'angle au coin bas-gauche
+    final Rect arc = Rect.fromCircle(center: bottom, radius: 22);
+    final double a1 = -math.atan2(top.dy - bottom.dy, top.dx - bottom.dx);
+    canvas.drawArc(arc, -a1 - 0.05, a1 - 0.05 + 0.05, false, _stroke);
+    if (labels['angle'] != null) {
+      _drawLabelChip(canvas, labels['angle']!,
+          Offset(bottom.dx + 32, bottom.dy - 14));
+    }
+    if (labels['base'] != null) {
+      _drawLabelChip(canvas, '${labels['base']} m',
+          Offset((bottom.dx + top.dx) / 2, groundY + 14));
+    }
+    if (labels['cable'] != null) {
+      _drawLabelChip(canvas, '${labels['cable']} m',
+          Offset((bottom.dx + top.dx) / 2 - 18, (bottom.dy + top.dy) / 2 - 16),
+          color: AppColors.danger);
+    }
+  }
+
+  // Toit (triangle isocèle posé sur des murs)
+  void _paintRoof(Canvas canvas, Size size, Map<String, String> labels) {
+    final double pad = 22;
+    final double baseY = size.height * 0.78;
+    // Murs
+    final double leftX = size.width * 0.18;
+    final double rightX = size.width * 0.82;
+    canvas.drawRect(
+      Rect.fromLTRB(leftX, baseY, rightX, size.height - 12),
+      _paintFill(const Color(0xFFE9D5FF)),
+    );
+    // Toit (triangle)
+    final Offset l = Offset(leftX - 8, baseY);
+    final Offset r = Offset(rightX + 8, baseY);
+    final Offset apex = Offset((leftX + rightX) / 2, pad);
+    final Path roof = Path()
+      ..moveTo(l.dx, l.dy)
+      ..lineTo(r.dx, r.dy)
+      ..lineTo(apex.dx, apex.dy)
+      ..close();
+    canvas.drawPath(roof, _paintFill(const Color(0xFFD2899A)));
+    canvas.drawPath(roof, _stroke);
+    // Hauteur
+    final Offset foot = Offset(apex.dx, baseY);
+    canvas.drawLine(apex, foot, _dashed);
+    // Arc d'angle à gauche
+    final Rect arc = Rect.fromCircle(center: l, radius: 22);
+    final double a1 = -math.atan2(apex.dy - l.dy, apex.dx - l.dx);
+    canvas.drawArc(arc, -a1 - 0.05, a1 + 0.05, false, _stroke);
+    if (labels['angle'] != null) {
+      _drawLabelChip(canvas, labels['angle']!,
+          Offset(l.dx + 30, l.dy - 14));
+    }
+    if (labels['rafter'] != null) {
+      _drawLabelChip(canvas, '${labels['rafter']} m',
+          Offset((l.dx + apex.dx) / 2 - 14, (l.dy + apex.dy) / 2),
+          color: AppColors.danger);
+    }
+    if (labels['height'] != null) {
+      _drawLabelChip(canvas, '${labels['height']} m',
+          Offset(apex.dx + 16, (apex.dy + foot.dy) / 2));
+    }
+  }
+
+  // Pizza (disque)
+  void _paintPizza(Canvas canvas, Size size, Map<String, String> labels) {
+    final Offset c = Offset(size.width / 2, size.height / 2);
+    final double r = math.min(size.width, size.height) / 2 - 24;
+    // Croûte
+    canvas.drawCircle(c, r, _paintFill(const Color(0xFFE8B889)));
+    // Garniture
+    canvas.drawCircle(c, r - 8, _paintFill(const Color(0xFFE76A4D)));
+    // Pepperonis
+    final Paint pep = _paintFill(const Color(0xFFA22D2D));
+    for (final List<double> p in <List<double>>[
+      <double>[-0.4, -0.2],
+      <double>[0.3, -0.4],
+      <double>[0.5, 0.2],
+      <double>[-0.2, 0.4],
+      <double>[0.0, 0.0],
+      <double>[-0.5, 0.1],
+    ]) {
+      canvas.drawCircle(
+          Offset(c.dx + p[0] * r * 0.7, c.dy + p[1] * r * 0.7), r * 0.10, pep);
+    }
+    // Rayon
+    canvas.drawLine(c, Offset(c.dx + r, c.dy), _stroke);
+    canvas.drawCircle(c, 3, _paintFill(AppColors.violetDeep));
+    if (labels['radius'] != null) {
+      _drawLabelChip(canvas, '${labels['radius']} cm',
+          Offset(c.dx + r / 2, c.dy - 14));
+    }
+  }
+
+  // Bassin circulaire vu de dessus
+  void _paintPool(Canvas canvas, Size size, Map<String, String> labels) {
+    final Offset c = Offset(size.width / 2, size.height / 2);
+    final double r = math.min(size.width, size.height) / 2 - 22;
+    // Margelle
+    canvas.drawCircle(c, r + 6, _paintFill(const Color(0xFFD9C2FF)));
+    // Eau
+    canvas.drawCircle(c, r, _paintFill(const Color(0xFF6FB7DD)));
+    // Vagues stylisées (arcs)
+    final Paint wave = Paint()
+      ..color = Colors.white.withValues(alpha: 0.7)
+      ..strokeWidth = 1.8
+      ..style = PaintingStyle.stroke;
+    for (final double rr in <double>[r * 0.45, r * 0.65]) {
+      canvas.drawArc(
+          Rect.fromCircle(center: c, radius: rr), 0.4, 0.7, false, wave);
+      canvas.drawArc(
+          Rect.fromCircle(center: c, radius: rr), 2.4, 0.7, false, wave);
+    }
+    // Rayon
+    canvas.drawLine(c, Offset(c.dx + r, c.dy), _stroke);
+    canvas.drawCircle(c, 3, _paintFill(AppColors.violetDeep));
+    if (labels['radius'] != null) {
+      _drawLabelChip(canvas, '${labels['radius']} m',
+          Offset(c.dx + r / 2, c.dy - 14));
+    }
+  }
+
+  // Cuve cylindrique
+  void _paintTank(Canvas canvas, Size size, Map<String, String> labels) {
+    final double pad = 20;
+    final double w = size.width - pad * 2;
+    final double rx = w / 5;
+    final double ry = rx * 0.32;
+    final Offset top = Offset(size.width / 2, pad + ry);
+    final Offset bottom = Offset(size.width / 2, size.height - pad - ry);
+    // Corps
+    final Path body = Path()
+      ..moveTo(top.dx - rx, top.dy)
+      ..lineTo(bottom.dx - rx, bottom.dy)
+      ..arcToPoint(Offset(bottom.dx + rx, bottom.dy),
+          radius: Radius.elliptical(rx, ry), clockwise: false)
+      ..lineTo(top.dx + rx, top.dy)
+      ..arcToPoint(Offset(top.dx - rx, top.dy),
+          radius: Radius.elliptical(rx, ry), clockwise: true)
+      ..close();
+    canvas.drawPath(body, _paintFill(const Color(0xFFB6E1F5)));
+    canvas.drawPath(body, _stroke);
+    // Niveau d'eau (3/4)
+    final double waterY = top.dy + (bottom.dy - top.dy) * 0.30;
+    final Path water = Path()
+      ..moveTo(top.dx - rx, waterY)
+      ..lineTo(bottom.dx - rx, bottom.dy)
+      ..arcToPoint(Offset(bottom.dx + rx, bottom.dy),
+          radius: Radius.elliptical(rx, ry), clockwise: false)
+      ..lineTo(top.dx + rx, waterY)
+      ..arcToPoint(Offset(top.dx - rx, waterY),
+          radius: Radius.elliptical(rx, ry * 0.7), clockwise: true)
+      ..close();
+    canvas.drawPath(water, _paintFill(const Color(0xFF4A9DC9)));
+    // Ellipse arrière dessus pointillée
+    canvas.drawPath(
+      Path()
+        ..addArc(
+          Rect.fromCenter(center: top, width: rx * 2, height: ry * 2),
+          0,
+          math.pi,
+        ),
+      _dashed,
+    );
+    if (labels['radius'] != null) {
+      canvas.drawLine(top, Offset(top.dx + rx, top.dy), _stroke);
+      _drawLabelChip(canvas, '${labels['radius']} dm',
+          Offset(top.dx + rx / 2, top.dy - 14));
+    }
+    if (labels['height'] != null) {
+      _drawLabelChip(canvas, '${labels['height']} dm',
+          Offset(top.dx + rx + 22, (top.dy + bottom.dy) / 2));
+    }
+  }
+
+  // Caisse (pavé en perspective)
+  void _paintCrate(Canvas canvas, Size size, Map<String, String> labels) {
+    final double pad = 22;
+    final double w = size.width - pad * 2;
+    final double h = size.height - pad * 2;
+    final double depth = w * 0.22;
+    final double rectW = w - depth;
+    final double rectH = h - depth;
+    final Offset a = Offset(pad, pad + depth);
+    final Offset b = Offset(pad + rectW, pad + depth);
+    final Offset c = Offset(pad + rectW, pad + depth + rectH);
+    final Offset d = Offset(pad, pad + depth + rectH);
+    final Offset a2 = a + Offset(depth, -depth);
+    final Offset b2 = b + Offset(depth, -depth);
+    // Face avant (bois clair)
+    canvas.drawRect(Rect.fromPoints(a, c),
+        _paintFill(const Color(0xFFE8C57F)));
+    // Dessus
+    final Path top = Path()
+      ..moveTo(a.dx, a.dy)
+      ..lineTo(a2.dx, a2.dy)
+      ..lineTo(b2.dx, b2.dy)
+      ..lineTo(b.dx, b.dy)
+      ..close();
+    canvas.drawPath(top, _paintFill(const Color(0xFFD8AC60)));
+    // Côté
+    final Path side = Path()
+      ..moveTo(b.dx, b.dy)
+      ..lineTo(b2.dx, b2.dy)
+      ..lineTo(b2.dx, b2.dy + rectH)
+      ..lineTo(c.dx, c.dy)
+      ..close();
+    canvas.drawPath(side, _paintFill(const Color(0xFFB68345)));
+    // Contours
+    canvas.drawRect(Rect.fromPoints(a, c), _stroke);
+    canvas.drawPath(top, _stroke);
+    canvas.drawPath(side, _stroke);
+    // Lattes
+    for (int i = 1; i <= 3; i++) {
+      final double y = a.dy + i * rectH / 4;
+      canvas.drawLine(
+          Offset(a.dx, y),
+          Offset(b.dx, y),
+          Paint()
+            ..color = const Color(0xFFB68345)
+            ..strokeWidth = 1.2);
+    }
+    if (labels['length'] != null) {
+      _drawLabelChip(canvas, '${labels['length']} dm',
+          Offset((a.dx + b.dx) / 2, c.dy + 14));
+    }
+    if (labels['height'] != null) {
+      _drawLabelChip(canvas, '${labels['height']} dm',
+          Offset(a.dx - 22, (a.dy + d.dy) / 2));
+    }
+    if (labels['width'] != null) {
+      _drawLabelChip(canvas, '${labels['width']} dm',
+          Offset((a.dx + a2.dx) / 2 + 6, (a.dy + a2.dy) / 2 - 12));
+    }
+  }
+
+  // Terrain rectangulaire (vue plan)
+  void _paintField(Canvas canvas, Size size, Map<String, String> labels) {
+    final double pad = 26;
+    final Rect r = Rect.fromLTRB(pad, pad, size.width - pad, size.height - pad);
+    canvas.drawRect(r, _paintFill(const Color(0xFFB8E0BC)));
+    canvas.drawRect(r, _stroke);
+    // Diagonale
+    canvas.drawLine(r.topLeft, r.bottomRight, Paint()
+      ..color = AppColors.danger
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke);
+    // Petits arbres décoratifs
+    for (final List<double> p in <List<double>>[
+      <double>[0.18, 0.18],
+      <double>[0.82, 0.20],
+      <double>[0.20, 0.80],
+      <double>[0.78, 0.78],
+    ]) {
+      final Offset o = Offset(
+          r.left + p[0] * r.width, r.top + p[1] * r.height);
+      canvas.drawCircle(o, 6, _paintFill(const Color(0xFF4D7C45)));
+    }
+    if (labels['width'] != null) {
+      _drawLabelChip(canvas, '${labels['width']} m',
+          Offset(r.center.dx, r.bottom + 14));
+    }
+    if (labels['height'] != null) {
+      _drawLabelChip(canvas, '${labels['height']} m',
+          Offset(r.left - 22, r.center.dy));
+    }
+    if (labels['diag'] != null) {
+      _drawLabelChip(canvas, '${labels['diag']} m',
+          Offset(r.center.dx - 30, r.center.dy - 18),
+          color: AppColors.danger);
+    }
+  }
+
+  void _drawLabelChip(Canvas canvas, String text, Offset pos,
+      {Color color = AppColors.plumDark}) {
+    final TextPainter tp = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: GoogleFonts.quicksand(
+          fontSize: 12,
+          fontWeight: FontWeight.w900,
+          color: color,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    final double pad = 6;
+    final RRect bg = RRect.fromRectAndRadius(
+      Rect.fromCenter(
+        center: pos,
+        width: tp.width + pad * 2,
+        height: tp.height + pad,
+      ),
+      const Radius.circular(8),
+    );
+    canvas.drawRRect(bg,
+        Paint()..color = Colors.white.withValues(alpha: 0.94));
+    canvas.drawRRect(
+        bg,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1
+          ..color = color.withValues(alpha: 0.5));
+    tp.paint(
+        canvas, Offset(pos.dx - tp.width / 2, pos.dy - tp.height / 2));
   }
 }

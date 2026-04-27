@@ -13,6 +13,10 @@ class IntrusSet {
   final String theme;
   final String? explanation;
   final String? subjectId;
+
+  /// Identifiant stable dérivé du contenu — utilisé pour le tracking
+  /// "déjà vu" via ProgressService.pickUnseen.
+  String get id => '$theme|${items.join("/")}';
 }
 
 class IntrusData {

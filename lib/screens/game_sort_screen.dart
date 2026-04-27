@@ -22,9 +22,9 @@ class GameSortScreen extends StatefulWidget {
 }
 
 class _GameSortScreenState extends State<GameSortScreen> {
-  late SortDeck _deck;
-  late List<SortItem> _bank;
-  late List<List<SortItem>> _columns;
+  SortDeck? _deck;
+  List<SortItem>? _bank;
+  List<List<SortItem>>? _columns;
 
   @override
   void initState() {
@@ -32,55 +32,69 @@ class _GameSortScreenState extends State<GameSortScreen> {
     _setupDeck();
   }
 
-  void _setupDeck() {
+  Future<void> _setupDeck() async {
     final Random rng = Random();
-    _deck = SortDecks.all[rng.nextInt(SortDecks.all.length)];
-    _bank = List<SortItem>.of(_deck.items)..shuffle(rng);
-    _columns = List<List<SortItem>>.generate(
-      _deck.categories.length,
-      (_) => <SortItem>[],
+    final List<SortDeck> picked =
+        await ProgressService.instance.pickUnseen<SortDeck>(
+      poolId: 'sort-deck',
+      pool: SortDecks.all,
+      idOf: (SortDeck d) => d.id,
+      count: 1,
     );
+    if (!mounted || picked.isEmpty) return;
+    final SortDeck deck = picked.first;
+    setState(() {
+      _deck = deck;
+      _bank = List<SortItem>.of(deck.items)..shuffle(rng);
+      _columns = List<List<SortItem>>.generate(
+        deck.categories.length,
+        (_) => <SortItem>[],
+      );
+    });
   }
 
   void _onDropToColumn(int columnIndex, SortItem item) {
+    if (_bank == null || _columns == null) return;
     HapticFeedback.selectionClick();
     AudioService.instance.play(Sfx.tap);
     setState(() {
-      _bank.remove(item);
-      for (final List<SortItem> col in _columns) {
+      _bank!.remove(item);
+      for (final List<SortItem> col in _columns!) {
         col.remove(item);
       }
-      _columns[columnIndex].add(item);
+      _columns![columnIndex].add(item);
     });
   }
 
   void _onDropToBank(SortItem item) {
+    if (_bank == null || _columns == null) return;
     HapticFeedback.selectionClick();
     setState(() {
-      for (final List<SortItem> col in _columns) {
+      for (final List<SortItem> col in _columns!) {
         col.remove(item);
       }
-      if (!_bank.contains(item)) _bank.add(item);
+      if (!_bank!.contains(item)) _bank!.add(item);
     });
   }
 
   Future<void> _validate() async {
-    if (_bank.isNotEmpty) return;
+    if (_deck == null || _bank == null || _columns == null) return;
+    if (_bank!.isNotEmpty) return;
     int correct = 0;
-    for (int i = 0; i < _columns.length; i++) {
-      for (final SortItem it in _columns[i]) {
+    for (int i = 0; i < _columns!.length; i++) {
+      for (final SortItem it in _columns![i]) {
         if (it.categoryIndex == i) correct++;
       }
     }
     HapticFeedback.mediumImpact();
     AudioService.instance.play(
-      correct == _deck.items.length ? Sfx.correct : Sfx.wrong,
+      correct == _deck!.items.length ? Sfx.correct : Sfx.wrong,
     );
     final SessionRecordResult record =
         await ProgressService.instance.recordSession(
       SessionResult(
-        subjectId: _deck.subjectId,
-        answered: _deck.items.length,
+        subjectId: _deck!.subjectId,
+        answered: _deck!.items.length,
         correct: correct,
         gameId: GameId.sort.id,
       ),
@@ -89,9 +103,9 @@ class _GameSortScreenState extends State<GameSortScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (BuildContext resultCtx) => ResultScreen(
-          title: 'Tri · ${_deck.title}',
+          title: 'Tri · ${_deck!.title}',
           correct: correct,
-          answered: _deck.items.length,
+          answered: _deck!.items.length,
           record: record,
           onReplay: () {
             Navigator.of(resultCtx).pushReplacement(
@@ -107,6 +121,17 @@ class _GameSortScreenState extends State<GameSortScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_deck == null || _bank == null || _columns == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: ThemeService.instance.preset.bgGradient),
+          child: const SafeArea(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       body: Container(
         decoration:
@@ -133,11 +158,11 @@ class _GameSortScreenState extends State<GameSortScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text(_deck.emoji,
+                          Text(_deck!.emoji,
                               style: const TextStyle(fontSize: 14)),
                           const SizedBox(width: 6),
                           Text(
-                            _deck.title,
+                            _deck!.title,
                             style: GoogleFonts.quicksand(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
@@ -162,16 +187,16 @@ class _GameSortScreenState extends State<GameSortScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      for (int i = 0; i < _deck.categories.length; i++) ...<Widget>[
+                      for (int i = 0; i < _deck!.categories.length; i++) ...<Widget>[
                         Expanded(
                           child: _CategoryColumn(
                             key: ValueKey<String>('col-$i'),
-                            category: _deck.categories[i],
-                            items: _columns[i],
+                            category: _deck!.categories[i],
+                            items: _columns![i],
                             onAccept: (SortItem it) => _onDropToColumn(i, it),
                           ),
                         ),
-                        if (i < _deck.categories.length - 1)
+                        if (i < _deck!.categories.length - 1)
                           const SizedBox(width: 6),
                       ],
                     ],
@@ -179,7 +204,7 @@ class _GameSortScreenState extends State<GameSortScreen> {
                 ),
                 const SizedBox(height: 8),
                 _Bank(
-                  items: _bank,
+                  items: _bank!,
                   onAccept: _onDropToBank,
                 ),
                 const SizedBox(height: 10),
@@ -188,25 +213,25 @@ class _GameSortScreenState extends State<GameSortScreen> {
                   borderRadius: BorderRadius.circular(20),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20),
-                    onTap: _bank.isEmpty ? _validate : null,
+                    onTap: _bank!.isEmpty ? _validate : null,
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: _bank.isEmpty
+                        color: _bank!.isEmpty
                             ? AppColors.violet
                             : AppColors.glassSoft,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        _bank.isEmpty
+                        _bank!.isEmpty
                             ? 'valider'
-                            : 'glisse encore ${_bank.length} item${_bank.length > 1 ? 's' : ''}',
+                            : 'glisse encore ${_bank!.length} item${_bank!.length > 1 ? 's' : ''}',
                         style: GoogleFonts.quicksand(
                           fontSize: 14,
                           fontWeight: FontWeight.w900,
-                          color: _bank.isEmpty
+                          color: _bank!.isEmpty
                               ? Colors.white
                               : AppColors.plumDark,
                           letterSpacing: 1.2,

@@ -24,7 +24,7 @@ class GameIntrusScreen extends StatefulWidget {
 }
 
 class _GameIntrusScreenState extends State<GameIntrusScreen> {
-  late List<IntrusSet> _sets;
+  List<IntrusSet>? _sets;
   int _idx = 0;
   int _correct = 0;
   int? _selected;
@@ -33,13 +33,22 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
   @override
   void initState() {
     super.initState();
+    _setupSets();
+  }
+
+  Future<void> _setupSets() async {
     final Random rng = Random();
-    final List<IntrusSet> shuffled = List<IntrusSet>.of(IntrusData.all)
-      ..shuffle(rng);
-    _sets = shuffled
-        .take(widget.rounds)
-        .map((IntrusSet s) => _shuffleItems(s, rng))
-        .toList();
+    final List<IntrusSet> picked =
+        await ProgressService.instance.pickUnseen<IntrusSet>(
+      poolId: 'intrus',
+      pool: IntrusData.all,
+      idOf: (IntrusSet s) => s.id,
+      count: widget.rounds.clamp(1, IntrusData.all.length),
+    );
+    if (!mounted) return;
+    setState(() {
+      _sets = picked.map((IntrusSet s) => _shuffleItems(s, rng)).toList();
+    });
   }
 
   IntrusSet _shuffleItems(IntrusSet s, Random rng) {
@@ -55,9 +64,9 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
   }
 
   void _onPick(int i) {
-    if (_locked) return;
+    if (_locked || _sets == null) return;
     HapticFeedback.selectionClick();
-    final IntrusSet s = _sets[_idx];
+    final IntrusSet s = _sets![_idx];
     final bool ok = i == s.intruderIndex;
     AudioService.instance.play(ok ? Sfx.correct : Sfx.wrong);
     setState(() {
@@ -69,8 +78,8 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
   }
 
   void _next() {
-    if (!mounted) return;
-    if (_idx + 1 >= _sets.length) {
+    if (!mounted || _sets == null) return;
+    if (_idx + 1 >= _sets!.length) {
       _finish();
       return;
     }
@@ -82,11 +91,12 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
   }
 
   Future<void> _finish() async {
+    final int answered = _sets?.length ?? 0;
     final SessionRecordResult record =
         await ProgressService.instance.recordSession(
       SessionResult(
         subjectId: null,
-        answered: _sets.length,
+        answered: answered,
         correct: _correct,
         gameId: GameId.intrus.id,
       ),
@@ -97,7 +107,7 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
         builder: (BuildContext resultCtx) => ResultScreen(
           title: 'L\'intrus',
           correct: _correct,
-          answered: _sets.length,
+          answered: answered,
           record: record,
           onReplay: () {
             Navigator.of(resultCtx).pushReplacement(
@@ -113,7 +123,18 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final IntrusSet s = _sets[_idx];
+    if (_sets == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: ThemeService.instance.preset.bgGradient),
+          child: const SafeArea(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
+    final IntrusSet s = _sets![_idx];
     return Scaffold(
       body: Container(
         decoration:
@@ -138,7 +159,7 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        '${_idx + 1} / ${_sets.length}',
+                        '${_idx + 1} / ${_sets!.length}',
                         style: GoogleFonts.quicksand(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,

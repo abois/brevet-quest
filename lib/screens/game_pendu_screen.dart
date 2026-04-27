@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,7 +23,7 @@ class GamePenduScreen extends StatefulWidget {
 }
 
 class _GamePenduScreenState extends State<GamePenduScreen> {
-  late List<PenduWord> _words;
+  List<PenduWord>? _words;
   int _idx = 0;
   int _correct = 0;
   final Set<String> _guessed = <String>{};
@@ -41,18 +39,28 @@ class _GamePenduScreenState extends State<GamePenduScreen> {
   @override
   void initState() {
     super.initState();
-    final List<PenduWord> shuffled = List<PenduWord>.of(PenduWords.all)
-      ..shuffle(Random());
-    _words = shuffled.take(widget.wordCount).toList();
+    _setupWords();
   }
 
-  PenduWord get _current => _words[_idx];
+  Future<void> _setupWords() async {
+    final List<PenduWord> picked =
+        await ProgressService.instance.pickUnseen<PenduWord>(
+      poolId: 'pendu',
+      pool: PenduWords.all,
+      idOf: (PenduWord w) => w.id,
+      count: widget.wordCount.clamp(1, PenduWords.all.length),
+    );
+    if (!mounted) return;
+    setState(() => _words = picked);
+  }
+
+  PenduWord get _current => _words![_idx];
   Set<String> get _wordLetters => _current.word.split('').toSet();
   bool get _isWon =>
       _wordLetters.every((String l) => _guessed.contains(l));
 
   void _onLetter(String letter) {
-    if (_gameOver || _guessed.contains(letter)) return;
+    if (_words == null || _gameOver || _guessed.contains(letter)) return;
     HapticFeedback.selectionClick();
     final bool inWord = _current.word.contains(letter);
     AudioService.instance.play(inWord ? Sfx.tap : Sfx.wrong);
@@ -72,8 +80,8 @@ class _GamePenduScreenState extends State<GamePenduScreen> {
   }
 
   void _next() {
-    if (!mounted) return;
-    if (_idx + 1 >= _words.length) {
+    if (!mounted || _words == null) return;
+    if (_idx + 1 >= _words!.length) {
       _finish();
       return;
     }
@@ -86,11 +94,12 @@ class _GamePenduScreenState extends State<GamePenduScreen> {
   }
 
   Future<void> _finish() async {
+    final int answered = _words?.length ?? 0;
     final SessionRecordResult record =
         await ProgressService.instance.recordSession(
       SessionResult(
         subjectId: null,
-        answered: _words.length,
+        answered: answered,
         correct: _correct,
         gameId: GameId.pendu.id,
       ),
@@ -101,7 +110,7 @@ class _GamePenduScreenState extends State<GamePenduScreen> {
         builder: (BuildContext resultCtx) => ResultScreen(
           title: 'Pendu',
           correct: _correct,
-          answered: _words.length,
+          answered: answered,
           record: record,
           onReplay: () {
             Navigator.of(resultCtx).pushReplacement(
@@ -117,6 +126,17 @@ class _GamePenduScreenState extends State<GamePenduScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_words == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: ThemeService.instance.preset.bgGradient),
+          child: const SafeArea(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
     final PenduWord w = _current;
     return Scaffold(
       body: Container(
@@ -142,7 +162,7 @@ class _GamePenduScreenState extends State<GamePenduScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        '${_idx + 1} / ${_words.length}  ·  $_correct ✓',
+                        '${_idx + 1} / ${_words!.length}  ·  $_correct ✓',
                         style: GoogleFonts.quicksand(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,7 +47,7 @@ class GameQcmScreen extends StatefulWidget {
 }
 
 class _GameQcmScreenState extends State<GameQcmScreen> {
-  late List<Question> _questions;
+  List<Question>? _questions;
   int _idx = 0;
   int _correct = 0;
   int? _selected;
@@ -59,9 +58,8 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
   @override
   void initState() {
     super.initState();
-    _questions = _pickQuestions();
     _remaining = widget.secondsPerQuestion;
-    _startTimer();
+    _setupQuestions();
   }
 
   @override
@@ -70,7 +68,7 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
     super.dispose();
   }
 
-  List<Question> _pickQuestions() {
+  Future<void> _setupQuestions() async {
     final Niveau niveau = PreferencesService.instance.niveau;
     final List<Question> source = widget.questionPool ??
         <Question>[
@@ -79,9 +77,25 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
           ...SubjectsData.allQuestionsByTypeForNiveau(
               QuestionType.trueFalse, niveau),
         ];
-    final List<Question> shuffled = List<Question>.of(source)
-      ..shuffle(Random());
-    return shuffled.take(widget.questionCount).toList();
+    String poolId = 'qcm-${niveau.id}';
+    if (widget.subjectId != null) poolId += '-${widget.subjectId}';
+    if (widget.questionPool != null) {
+      poolId += '-pool${source.length}'
+          '-${source.isNotEmpty ? source.first.id : "empty"}';
+    }
+    final List<Question> picked =
+        await ProgressService.instance.pickUnseen<Question>(
+      poolId: poolId,
+      pool: source,
+      idOf: (Question q) => q.id,
+      count: widget.questionCount.clamp(
+          1, source.isEmpty ? 1 : source.length),
+    );
+    if (!mounted) return;
+    setState(() {
+      _questions = picked;
+    });
+    _startTimer();
   }
 
   void _startTimer() {
@@ -111,8 +125,8 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
   }
 
   void _onPick(int i) {
-    if (_locked) return;
-    final Question q = _questions[_idx];
+    if (_locked || _questions == null) return;
+    final Question q = _questions![_idx];
     HapticFeedback.selectionClick();
     final bool ok = q.isCorrect(i);
     AudioService.instance.play(ok ? Sfx.correct : Sfx.wrong);
@@ -131,8 +145,8 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
   }
 
   void _next() {
-    if (!mounted) return;
-    if (_idx + 1 >= _questions.length) {
+    if (!mounted || _questions == null) return;
+    if (_idx + 1 >= _questions!.length) {
       _finish();
       return;
     }
@@ -161,7 +175,7 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
         builder: (BuildContext resultCtx) => ResultScreen(
           title: widget.title,
           correct: _correct,
-          answered: _questions.length,
+          answered: _questions?.length ?? 0,
           record: record,
           onReplay: () {
             Navigator.of(resultCtx).pushReplacement(
@@ -184,10 +198,21 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_questions.isEmpty) {
+    if (_questions == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: ThemeService.instance.preset.bgGradient),
+          child: const SafeArea(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
+    if (_questions!.isEmpty) {
       return const _EmptyState();
     }
-    final Question q = _questions[_idx];
+    final Question q = _questions![_idx];
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(gradient: ThemeService.instance.preset.bgGradient),
@@ -200,7 +225,7 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
                 _Header(
                   title: widget.title,
                   index: _idx + 1,
-                  total: _questions.length,
+                  total: _questions!.length,
                   remaining: _remaining,
                   totalSeconds: widget.secondsPerQuestion,
                 ),

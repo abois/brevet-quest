@@ -1,10 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../data/subjects_data.dart';
+import '../models/chapter.dart';
 import '../models/daily_quest.dart';
 import '../models/question.dart';
 import '../services/audio_service.dart';
@@ -24,15 +23,10 @@ class GameSurvivalScreen extends StatefulWidget {
 }
 
 class _GameSurvivalScreenState extends State<GameSurvivalScreen> {
-  final List<Question> _pool = <Question>[
-    ...SubjectsData.allQuestionsByTypeForNiveau(
-        QuestionType.qcm, PreferencesService.instance.niveau),
-    ...SubjectsData.allQuestionsByTypeForNiveau(
-        QuestionType.trueFalse, PreferencesService.instance.niveau),
-  ];
-  final Random _rng = Random();
+  List<Question>? _pool;
+  int _cursor = 0;
 
-  late Question _current;
+  Question? _current;
   int _lives = 3;
   int _streak = 0;
   int _answered = 0;
@@ -43,16 +37,46 @@ class _GameSurvivalScreenState extends State<GameSurvivalScreen> {
   @override
   void initState() {
     super.initState();
-    _pool.shuffle(_rng);
-    _current = _next();
+    _setupPool();
   }
 
-  Question _next() => _pool[_rng.nextInt(_pool.length)];
+  Future<void> _setupPool() async {
+    final Niveau niveau = PreferencesService.instance.niveau;
+    final List<Question> base = <Question>[
+      ...SubjectsData.allQuestionsByTypeForNiveau(QuestionType.qcm, niveau),
+      ...SubjectsData.allQuestionsByTypeForNiveau(
+          QuestionType.trueFalse, niveau),
+    ];
+    if (base.isEmpty) {
+      if (!mounted) return;
+      setState(() => _pool = <Question>[]);
+      return;
+    }
+    final List<Question> picked =
+        await ProgressService.instance.pickUnseen<Question>(
+      poolId: 'survival-${niveau.id}',
+      pool: base,
+      idOf: (Question q) => q.id,
+      count: base.length,
+    );
+    if (!mounted) return;
+    setState(() {
+      _pool = picked;
+      _cursor = 0;
+      _current = picked.isNotEmpty ? picked.first : null;
+    });
+  }
+
+  Question? _next() {
+    if (_pool == null || _pool!.isEmpty) return null;
+    _cursor = (_cursor + 1) % _pool!.length;
+    return _pool![_cursor];
+  }
 
   void _onPick(int i) {
-    if (_locked) return;
+    if (_locked || _current == null) return;
     HapticFeedback.selectionClick();
-    final bool ok = _current.isCorrect(i);
+    final bool ok = _current!.isCorrect(i);
     AudioService.instance.play(ok ? Sfx.correct : Sfx.wrong);
     setState(() {
       _selected = i;
@@ -112,7 +136,23 @@ class _GameSurvivalScreenState extends State<GameSurvivalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Question q = _current;
+    if (_pool == null || _current == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: ThemeService.instance.preset.bgGradient),
+          child: const SafeArea(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
+    if (_pool!.isEmpty) {
+      return const Scaffold(
+        body: Center(child: Text('Aucune question disponible.')),
+      );
+    }
+    final Question q = _current!;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(gradient: ThemeService.instance.preset.bgGradient),

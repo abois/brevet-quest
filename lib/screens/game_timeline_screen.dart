@@ -22,8 +22,8 @@ class GameTimelineScreen extends StatefulWidget {
 }
 
 class _GameTimelineScreenState extends State<GameTimelineScreen> {
-  late TimelineDeck _deck;
-  late List<TimelineEvent> _ordered;
+  TimelineDeck? _deck;
+  List<TimelineEvent>? _ordered;
   bool _checked = false;
   int _correctPositions = 0;
 
@@ -33,37 +33,49 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
     _setupDeck();
   }
 
-  void _setupDeck() {
+  Future<void> _setupDeck() async {
     final Random rng = Random();
-    _deck = TimelineDecks.all[rng.nextInt(TimelineDecks.all.length)];
-    final List<TimelineEvent> shuffled = List<TimelineEvent>.of(_deck.events)
+    final List<TimelineDeck> picked =
+        await ProgressService.instance.pickUnseen<TimelineDeck>(
+      poolId: 'timeline-deck',
+      pool: TimelineDecks.all,
+      idOf: (TimelineDeck d) => d.id,
+      count: 1,
+    );
+    if (!mounted || picked.isEmpty) return;
+    final TimelineDeck deck = picked.first;
+    final List<TimelineEvent> shuffled = List<TimelineEvent>.of(deck.events)
       ..shuffle(rng);
-    _ordered = shuffled;
-    _checked = false;
-    _correctPositions = 0;
+    setState(() {
+      _deck = deck;
+      _ordered = shuffled;
+      _checked = false;
+      _correctPositions = 0;
+    });
   }
 
   void _onReorder(int oldIndex, int newIndex) {
-    if (_checked) return;
+    if (_checked || _ordered == null) return;
     HapticFeedback.selectionClick();
     AudioService.instance.play(Sfx.tap);
     setState(() {
       if (newIndex > oldIndex) newIndex -= 1;
-      final TimelineEvent item = _ordered.removeAt(oldIndex);
-      _ordered.insert(newIndex, item);
+      final TimelineEvent item = _ordered!.removeAt(oldIndex);
+      _ordered!.insert(newIndex, item);
     });
   }
 
   Future<void> _check() async {
-    final List<TimelineEvent> sorted = List<TimelineEvent>.of(_deck.events)
+    if (_deck == null || _ordered == null) return;
+    final List<TimelineEvent> sorted = List<TimelineEvent>.of(_deck!.events)
       ..sort((TimelineEvent a, TimelineEvent b) => a.year.compareTo(b.year));
     int correct = 0;
-    for (int i = 0; i < _ordered.length; i++) {
-      if (_ordered[i].year == sorted[i].year) correct++;
+    for (int i = 0; i < _ordered!.length; i++) {
+      if (_ordered![i].year == sorted[i].year) correct++;
     }
     HapticFeedback.mediumImpact();
     AudioService.instance.play(
-      correct == _ordered.length ? Sfx.correct : Sfx.wrong,
+      correct == _ordered!.length ? Sfx.correct : Sfx.wrong,
     );
     setState(() {
       _checked = true;
@@ -72,8 +84,8 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
     final SessionRecordResult record =
         await ProgressService.instance.recordSession(
       SessionResult(
-        subjectId: _deck.subjectId,
-        answered: _ordered.length,
+        subjectId: _deck!.subjectId,
+        answered: _ordered!.length,
         correct: correct,
         gameId: GameId.timeline.id,
       ),
@@ -84,9 +96,9 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (BuildContext resultCtx) => ResultScreen(
-          title: 'Frise · ${_deck.title}',
+          title: 'Frise · ${_deck!.title}',
           correct: correct,
-          answered: _ordered.length,
+          answered: _ordered!.length,
           record: record,
           onReplay: () {
             Navigator.of(resultCtx).pushReplacement(
@@ -101,14 +113,25 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
   }
 
   bool _isInRightPosition(int i) {
-    if (!_checked) return false;
-    final List<TimelineEvent> sorted = List<TimelineEvent>.of(_deck.events)
+    if (!_checked || _deck == null || _ordered == null) return false;
+    final List<TimelineEvent> sorted = List<TimelineEvent>.of(_deck!.events)
       ..sort((TimelineEvent a, TimelineEvent b) => a.year.compareTo(b.year));
-    return _ordered[i].year == sorted[i].year;
+    return _ordered![i].year == sorted[i].year;
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_deck == null || _ordered == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: ThemeService.instance.preset.bgGradient),
+          child: const SafeArea(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       body: Container(
         decoration:
@@ -137,12 +160,12 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                            _deck.emoji,
+                            _deck!.emoji,
                             style: const TextStyle(fontSize: 14),
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            _deck.title,
+                            _deck!.title,
                             style: GoogleFonts.quicksand(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
@@ -159,7 +182,7 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
                 const SizedBox(height: 4),
                 Text(
                   _checked
-                      ? '$_correctPositions / ${_ordered.length} bien placés'
+                      ? '$_correctPositions / ${_ordered!.length} bien placés'
                       : 'glisse pour ranger du + ancien au + récent',
                   style: AppText.subtitle,
                 ),
@@ -172,13 +195,13 @@ class _GameTimelineScreenState extends State<GameTimelineScreen> {
                       color: Colors.transparent,
                       child: child,
                     ),
-                    itemCount: _ordered.length,
+                    itemCount: _ordered!.length,
                     onReorder: _onReorder,
                     itemBuilder: (BuildContext ctx, int i) {
-                      final TimelineEvent e = _ordered[i];
+                      final TimelineEvent e = _ordered![i];
                       return _TimelineTile(
                         key: ValueKey<String>(
-                            '${_deck.id}-${e.year}-${e.label}'),
+                            '${_deck!.id}-${e.year}-${e.label}'),
                         index: i,
                         event: e,
                         revealed: _checked,

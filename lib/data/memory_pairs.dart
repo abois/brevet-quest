@@ -9,6 +9,8 @@ class MemoryPair {
   final String left;
   final String right;
   final String theme;
+
+  String get id => '$theme|$left|$right';
 }
 
 class MemoryDecks {

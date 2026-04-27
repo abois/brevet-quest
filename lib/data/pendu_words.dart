@@ -9,6 +9,8 @@ class PenduWord {
   final String word;
   final String hint;
   final String? subjectId;
+
+  String get id => word;
 }
 
 class PenduWords {

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,7 +31,7 @@ class GameTrueFalseScreen extends StatefulWidget {
 }
 
 class _GameTrueFalseScreenState extends State<GameTrueFalseScreen> {
-  late List<Question> _deck;
+  List<Question>? _deck;
   int _idx = 0;
   int _correct = 0;
   int _answered = 0;
@@ -45,8 +44,46 @@ class _GameTrueFalseScreenState extends State<GameTrueFalseScreen> {
   @override
   void initState() {
     super.initState();
-    _deck = _buildDeck();
     _remaining = widget.totalSeconds;
+    _setupDeck();
+  }
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _setupDeck() async {
+    final Niveau niveau = PreferencesService.instance.niveau;
+    final List<Question> base = <Question>[
+      ...SubjectsData.allQuestionsByTypeForNiveau(
+          QuestionType.trueFalse, niveau),
+    ];
+    if (base.isEmpty) {
+      if (!mounted) return;
+      setState(() => _deck = <Question>[]);
+      _startTicker();
+      return;
+    }
+    final List<Question> picked =
+        await ProgressService.instance.pickUnseen<Question>(
+      poolId: 'truefalse-${niveau.id}',
+      pool: base,
+      idOf: (Question q) => q.id,
+      count: base.length,
+    );
+    // Boucler le deck pour avoir suffisamment de matériel sur 60s.
+    final List<Question> deck = <Question>[];
+    while (deck.length < 60 && picked.isNotEmpty) {
+      deck.addAll(picked);
+    }
+    if (!mounted) return;
+    setState(() => _deck = deck);
+    _startTicker();
+  }
+
+  void _startTicker() {
     _ticker = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (!mounted) {
         t.cancel();
@@ -58,30 +95,6 @@ class _GameTrueFalseScreenState extends State<GameTrueFalseScreen> {
         _finish();
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _ticker?.cancel();
-    super.dispose();
-  }
-
-  List<Question> _buildDeck() {
-    final Niveau niveau = PreferencesService.instance.niveau;
-    final List<Question> base = <Question>[
-      ...SubjectsData.allQuestionsByTypeForNiveau(
-          QuestionType.trueFalse, niveau),
-      // On ajoute les QCM transformables en Vrai/Faux serait coûteux,
-      // on reste sur les vrais Vrai/Faux du seed et on boucle si vide.
-    ];
-    base.shuffle(Random());
-    if (base.isEmpty) return <Question>[];
-    // Boucler le deck pour avoir 60s de matériel.
-    final List<Question> deck = <Question>[];
-    while (deck.length < 60) {
-      deck.addAll(base);
-    }
-    return deck;
   }
 
   void _onDragUpdate(DragUpdateDetails d) {
@@ -97,8 +110,8 @@ class _GameTrueFalseScreenState extends State<GameTrueFalseScreen> {
   }
 
   void _commit(bool answeredTrue) {
-    if (_idx >= _deck.length) return;
-    final Question q = _deck[_idx];
+    if (_deck == null || _idx >= _deck!.length) return;
+    final Question q = _deck![_idx];
     // 0 = Vrai, 1 = Faux dans le seed
     final int picked = answeredTrue ? 0 : 1;
     final bool ok = q.isCorrect(picked);
@@ -111,7 +124,7 @@ class _GameTrueFalseScreenState extends State<GameTrueFalseScreen> {
       _idx++;
       _drag = Offset.zero;
     });
-    if (_idx >= _deck.length) _finish();
+    if (_idx >= _deck!.length) _finish();
   }
 
   Future<void> _finish() async {
@@ -149,7 +162,18 @@ class _GameTrueFalseScreenState extends State<GameTrueFalseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_deck.isEmpty) {
+    if (_deck == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: ThemeService.instance.preset.bgGradient),
+          child: const SafeArea(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
+    if (_deck!.isEmpty) {
       return const Scaffold(
         body: Center(child: Text('Aucune affirmation disponible.')),
       );
@@ -174,15 +198,15 @@ class _GameTrueFalseScreenState extends State<GameTrueFalseScreen> {
                     alignment: Alignment.center,
                     children: <Widget>[
                       const _Hint(),
-                      if (_idx + 1 < _deck.length)
+                      if (_idx + 1 < _deck!.length)
                         _BackgroundCard(
-                          key: ValueKey<String>('bg-${_deck[_idx + 1].id}'),
-                          question: _deck[_idx + 1],
+                          key: ValueKey<String>('bg-${_deck![_idx + 1].id}'),
+                          question: _deck![_idx + 1],
                         ),
-                      if (_idx < _deck.length)
+                      if (_idx < _deck!.length)
                         _SwipeCard(
                           key: ValueKey<String>('top-$_idx'),
-                          question: _deck[_idx],
+                          question: _deck![_idx],
                           drag: _drag,
                           onUpdate: _onDragUpdate,
                           onEnd: _onDragEnd,

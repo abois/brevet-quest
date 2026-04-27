@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +31,7 @@ class GameDicteeScreen extends StatefulWidget {
 }
 
 class _GameDicteeScreenState extends State<GameDicteeScreen> {
-  late List<DicteeItem> _items;
+  List<DicteeItem>? _items;
   int _idx = 0;
   int _correct = 0;
   int _playsLeft = 0;
@@ -70,17 +69,23 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
     super.dispose();
   }
 
-  void _setupItems() {
-    final List<DicteeItem> shuffled = List<DicteeItem>.of(DicteeData.all)
-      ..shuffle(Random());
-    _items = shuffled.take(widget.itemCount).toList();
+  Future<void> _setupItems() async {
+    final List<DicteeItem> picked =
+        await ProgressService.instance.pickUnseen<DicteeItem>(
+      poolId: 'dictee',
+      pool: DicteeData.all,
+      idOf: (DicteeItem it) => it.id,
+      count: widget.itemCount.clamp(1, DicteeData.all.length),
+    );
+    if (!mounted) return;
+    setState(() => _items = picked);
   }
 
   Future<void> _play() async {
-    if (_isPlaying || _playsLeft <= 0 || _checked) return;
+    if (_items == null || _isPlaying || _playsLeft <= 0 || _checked) return;
     HapticFeedback.selectionClick();
     AudioService.instance.play(Sfx.tap);
-    final DicteeItem item = _items[_idx];
+    final DicteeItem item = _items![_idx];
     try {
       await AudioService.instance.pauseMusic();
       await _player.stop();
@@ -103,11 +108,12 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
   }
 
   void _validate() {
+    if (_items == null) return;
     if (_checked) {
       _next();
       return;
     }
-    final DicteeItem item = _items[_idx];
+    final DicteeItem item = _items![_idx];
     final bool ok = _isExactMatch(_ctrl.text, item.text);
     HapticFeedback.lightImpact();
     AudioService.instance.play(ok ? Sfx.correct : Sfx.wrong);
@@ -120,7 +126,8 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
   }
 
   void _next() {
-    if (_idx + 1 >= _items.length) {
+    if (_items == null) return;
+    if (_idx + 1 >= _items!.length) {
       _finish();
       return;
     }
@@ -137,11 +144,12 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
 
   Future<void> _finish() async {
     await _player.stop();
+    final int answered = _items?.length ?? 0;
     final SessionRecordResult record =
         await ProgressService.instance.recordSession(
       SessionResult(
         subjectId: 'francais',
-        answered: _items.length,
+        answered: answered,
         correct: _correct,
         gameId: GameId.dictee.id,
       ),
@@ -152,7 +160,7 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
         builder: (BuildContext resultCtx) => ResultScreen(
           title: 'Dictée',
           correct: _correct,
-          answered: _items.length,
+          answered: answered,
           record: record,
           onReplay: () {
             Navigator.of(resultCtx).pushReplacement(
@@ -168,7 +176,18 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final DicteeItem item = _items[_idx];
+    if (_items == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: ThemeService.instance.preset.bgGradient),
+          child: const SafeArea(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
+    final DicteeItem item = _items![_idx];
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(
@@ -195,7 +214,7 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        '${_idx + 1} / ${_items.length}',
+                        '${_idx + 1} / ${_items!.length}',
                         style: GoogleFonts.quicksand(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
@@ -249,7 +268,7 @@ class _GameDicteeScreenState extends State<GameDicteeScreen> {
                       ),
                       child: Text(
                         _checked
-                            ? (_idx + 1 >= _items.length
+                            ? (_idx + 1 >= _items!.length
                                 ? 'voir le résultat →'
                                 : 'phrase suivante →')
                             : 'valider',

@@ -1,7 +1,8 @@
 import 'problemes_data.dart';
 
-/// Type d'une question de brevet : numérique (saisie), QCM ou Vrai/Faux.
-enum BrevetQuestionKind { numerical, qcm, trueFalse }
+/// Type d'une question de brevet : numérique (saisie), QCM, Vrai/Faux,
+/// ou ouverte (rédaction libre + auto-évaluation par le joueur).
+enum BrevetQuestionKind { numerical, qcm, trueFalse, openEnded }
 
 /// Une question d'un exercice de brevet blanc.
 ///
@@ -19,7 +20,8 @@ class BrevetQuestion {
     this.points = 1,
   })  : kind = BrevetQuestionKind.numerical,
         choices = const <String>[],
-        answerIndex = 0;
+        answerIndex = 0,
+        modelAnswer = null;
 
   const BrevetQuestion.qcm({
     required this.prompt,
@@ -31,7 +33,8 @@ class BrevetQuestion {
   })  : kind = BrevetQuestionKind.qcm,
         answer = null,
         tolerance = null,
-        unit = null;
+        unit = null,
+        modelAnswer = null;
 
   const BrevetQuestion.trueFalse({
     required this.prompt,
@@ -43,6 +46,23 @@ class BrevetQuestion {
         choices = const <String>['Vrai', 'Faux'],
         answerIndex = answer ? 0 : 1,
         // ignore: avoid_field_initializers_in_const_classes
+        answer = null,
+        tolerance = null,
+        unit = null,
+        modelAnswer = null;
+
+  /// Question à réponse rédigée libre. Pas d'évaluation automatique :
+  /// après avoir saisi sa réponse, le joueur voit la « réponse type »
+  /// (`modelAnswer`) et s'auto-évalue (« j'avais juste » / « à revoir »).
+  const BrevetQuestion.openEnded({
+    required this.prompt,
+    required String this.modelAnswer,
+    required this.explanation,
+    this.schema,
+    this.points = 1,
+  })  : kind = BrevetQuestionKind.openEnded,
+        choices = const <String>[],
+        answerIndex = 0,
         answer = null,
         tolerance = null,
         unit = null;
@@ -59,6 +79,8 @@ class BrevetQuestion {
   // QCM / V-F
   final List<String> choices;
   final int answerIndex;
+  // Question ouverte : réponse type affichée pour auto-évaluation.
+  final String? modelAnswer;
 }
 
 /// Un exercice : un contexte commun + plusieurs questions enchaînées.
@@ -68,12 +90,18 @@ class BrevetExercise {
     required this.context,
     required this.questions,
     this.schema,
+    this.imageUrl,
+    this.imageCaption,
   });
 
   final String title;
   final String context;
   final List<BrevetQuestion> questions;
   final ProblemeSchema? schema;
+
+  /// URL d'une image (ex: tableau pour analyse de texte+image).
+  final String? imageUrl;
+  final String? imageCaption;
 
   int get totalPoints => questions.fold(0, (int s, BrevetQuestion q) => s + q.points);
 }
@@ -473,6 +501,187 @@ class BrevetSujets {
               unit: '%',
               explanation: '(80 − 48)/80 = 32/80 = 0,4 = 40 %.',
               points: 2,
+            ),
+          ],
+        ),
+      ],
+    ),
+
+    // ─────────────── Métropole — juin 2025 (français) ──────────
+    BrevetSujet(
+      id: 'brevet-metropole-2025-fr',
+      title: 'Brevet — Métropole, juin 2025',
+      subtitle: 'Français · texte de Simone de Beauvoir + grammaire',
+      emoji: '📘',
+      source: 'Métropole — juin 2025 (DNB français série générale)',
+      sourceUrl:
+          'https://eduscol.education.fr/document/68088/download',
+      unlockLevel: 5,
+      exercises: <BrevetExercise>[
+        BrevetExercise(
+          title: 'Exercice 1 — Compréhension du texte',
+          context:
+              'Texte support : Simone de Beauvoir, La Force de l\'âge (1960). '
+              'La narratrice s\'installe à Marseille pour son premier poste '
+              'd\'enseignante. Le texte intégral est dans le sujet officiel '
+              '(lien Eduscol ↗). Les questions ci-dessous sont une '
+              'adaptation QCM des questions à réponse rédigée du sujet réel.',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.qcm(
+              prompt:
+                  '1. Pour quelle raison la narratrice arrive-t-elle à Marseille ?',
+              choices: <String>[
+                'Elle vient pour des vacances',
+                'Elle vient enseigner (premier poste de prof)',
+                'Elle suit son compagnon pour son travail',
+                'Elle vient soigner sa santé',
+              ],
+              answerIndex: 1,
+              explanation:
+                  '« J\'aurais à faire quatorze heures de cours chaque semaine » : elle prend son poste d\'enseignante.',
+              points: 4,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '2. (Lignes 1-4) Quel élément montre que la narratrice vit un moment important ?',
+              choices: <String>[
+                'Elle décrit longuement la météo du jour',
+                'Elle insiste sur l\'aspect inaugural et mémoriel de son arrivée',
+                'Elle précise l\'heure exacte d\'arrivée du train',
+                'Elle énumère ses bagages',
+              ],
+              answerIndex: 1,
+              explanation:
+                  'Le texte évoque un changement de vie marquant, que la narratrice mémorise.',
+              points: 4,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '3. (Lignes 5-18) Qu\'est-ce qui fait dire qu\'« une vie nouvelle commence » ?',
+              choices: <String>[
+                'La narratrice est entourée de toute sa famille',
+                'Elle est seule, sans rien de préparé, et doit tout inventer',
+                'Elle a un emploi du temps déjà chargé d\'activités sociales',
+                'Elle s\'installe dans un appartement déjà meublé',
+              ],
+              answerIndex: 1,
+              explanation:
+                  'Elle est « seule, les mains vides », « pas même le lit » de prêt — « c\'était à moi de les inventer ».',
+              points: 6,
+            ),
+          ],
+        ),
+        BrevetExercise(
+          title: 'Exercice 2 — Texte & image',
+          context:
+              'On compare le texte de Beauvoir et le tableau impressionniste '
+              'ci-dessous. Frédéric Bazille, La Robe rose (1864, Musée d\'Orsay).',
+          imageUrl:
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Fr%C3%A9d%C3%A9ric_Bazille_-_The_Pink_Dress_-_Google_Art_Project.jpg/500px-Fr%C3%A9d%C3%A9ric_Bazille_-_The_Pink_Dress_-_Google_Art_Project.jpg',
+          imageCaption:
+              'F. Bazille, La Robe rose, 1864 — Musée d\'Orsay, Paris',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.qcm(
+              prompt:
+                  '4. Comment l\'émerveillement pour Marseille se manifeste-t-il dans le texte ?',
+              choices: <String>[
+                'Par une énumération de plaintes et de regrets',
+                'Par des images sensorielles et un lexique enthousiaste',
+                'Par un refus de décrire la ville',
+                'Par des comparaisons avec Paris uniquement',
+              ],
+              answerIndex: 1,
+              explanation:
+                  'Beauvoir mobilise des images positives, des impressions sensorielles : la ville est découverte avec enthousiasme.',
+              points: 6,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '5. Quels traits de caractère prêtez-vous à la narratrice ?',
+              choices: <String>[
+                'Timide, dépendante, peureuse',
+                'Indépendante, curieuse, courageuse',
+                'Frivole, indolente, distraite',
+                'Amère, hostile, méfiante',
+              ],
+              answerIndex: 1,
+              explanation:
+                  'Elle s\'installe seule, prend en main sa nouvelle vie, explore avec curiosité : indépendance, courage, curiosité.',
+              points: 6,
+            ),
+            BrevetQuestion.trueFalse(
+              prompt:
+                  '6. Le tableau de Bazille pourrait illustrer ce texte parce qu\'il met en scène une jeune femme contemplative ouverte sur un paysage extérieur.',
+              answer: true,
+              explanation:
+                  'Vrai : la pose, le regard porté au loin et l\'arrière-plan paysager font écho à l\'éveil de la narratrice à Marseille.',
+              points: 4,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '6 bis. Justifie en quelques phrases en quoi le tableau peut illustrer le texte. Cite un élément du texte ET un détail de l\'image.',
+              modelAnswer:
+                  'Le tableau représente une jeune femme assise, regardant un paysage clair avec des arbres et un ciel ouvert. Cette posture contemplative et l\'ouverture vers l\'extérieur font écho à la narratrice qui, à Marseille, ouvre sa fenêtre sur la ville et s\'émerveille de sa nouveauté. La solitude paisible du tableau rejoint l\'expérience de solitude féconde décrite par Beauvoir (« seule, les mains vides »).',
+              explanation:
+                  'On attend une mise en relation : un trait de l\'image (pose, lumière, paysage) ↔ un trait du texte (émerveillement, solitude, ouverture).',
+              points: 4,
+            ),
+          ],
+        ),
+        BrevetExercise(
+          title: 'Exercice 3 — Grammaire & langue',
+          context:
+              'Travail sur la langue à partir du texte de Beauvoir.',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.qcm(
+              prompt:
+                  '7. « J\'aurais à faire quatorze heures de cours chaque semaine » — à quel mode/temps est conjugué « j\'aurais à faire » ?',
+              choices: <String>[
+                'Indicatif imparfait',
+                'Conditionnel présent',
+                'Subjonctif présent',
+                'Indicatif futur',
+              ],
+              answerIndex: 1,
+              explanation:
+                  '« J\'aurais » + infinitif est un conditionnel présent à valeur de futur dans le passé.',
+              points: 1,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '8. Dans « les mains vides », quelle est la fonction de « vides » ?',
+              choices: <String>[
+                'Adverbe',
+                'Épithète liée du nom « mains »',
+                'Attribut du sujet',
+                'Complément du nom',
+              ],
+              answerIndex: 1,
+              explanation:
+                  '« vides » est un adjectif qualificatif épithète qui qualifie directement « mains ».',
+              points: 1,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '9. Réécriture : transpose « C\'était à moi de les inventer » au présent de l\'indicatif.',
+              choices: <String>[
+                'C\'est à moi de les inventer',
+                'Ce sera à moi de les inventer',
+                'C\'aurait été à moi de les inventer',
+                'Ce serait à moi de les inventer',
+              ],
+              answerIndex: 0,
+              explanation:
+                  'Le présent de l\'indicatif de « c\'était » est « c\'est ».',
+              points: 1,
+            ),
+            BrevetQuestion.trueFalse(
+              prompt:
+                  '10. Dans « emploi du temps », « du temps » est un complément du nom « emploi ».',
+              answer: true,
+              explanation:
+                  'Vrai : « du temps » complète le nom « emploi » et précise son sens.',
+              points: 1,
             ),
           ],
         ),

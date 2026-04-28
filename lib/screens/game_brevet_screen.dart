@@ -520,6 +520,45 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                     ProblemeSchemaView(schema: exo.schema!),
                     const SizedBox(height: 12),
                   ],
+                  if (exo.imageUrl != null) ...<Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        exo.imageUrl!,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext _, Widget child,
+                            ImageChunkEvent? prog) {
+                          if (prog == null) return child;
+                          return AspectRatio(
+                            aspectRatio: 1.2,
+                            child: Container(
+                              color: Bq.cardBg,
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder:
+                            (BuildContext _, Object _, StackTrace? _) =>
+                                const SizedBox.shrink(),
+                      ),
+                    ),
+                    if (exo.imageCaption != null) ...<Widget>[
+                      const SizedBox(height: 4),
+                      Text(
+                        exo.imageCaption!,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 11,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w600,
+                          color: Bq.textOnBg.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                  ],
                   // Contexte de l'exercice
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -685,6 +724,9 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
         ],
       );
     }
+    if (q.kind == BrevetQuestionKind.openEnded) {
+      return _buildOpenEnded(q);
+    }
     // QCM ou Vrai/Faux : boutons de choix
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -708,6 +750,142 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
           ),
       ],
     );
+  }
+
+  Widget _buildOpenEnded(BrevetQuestion q) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        TextField(
+          controller: _ctrl,
+          focusNode: _focus,
+          enabled: !_locked,
+          maxLines: 5,
+          minLines: 3,
+          textInputAction: TextInputAction.newline,
+          style: GoogleFonts.quicksand(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Bq.textOnBg,
+          ),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Bq.cardBg,
+            hintText: 'Rédige ta réponse…',
+            hintStyle: GoogleFonts.quicksand(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Bq.textOnBg.withValues(alpha: 0.4),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.all(12),
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (!_locked)
+          _ActionBtn(
+            label: 'voir la réponse type',
+            primary: true,
+            onTap: _revealModelAnswer,
+          )
+        else ...<Widget>[
+          // Affichage de la modelAnswer
+          if (q.modelAnswer != null)
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.success,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.successDark, width: 1.5),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('réponse type',
+                      style: GoogleFonts.quicksand(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.successDark.withValues(alpha: 0.8),
+                        letterSpacing: 1.5,
+                      )),
+                  const SizedBox(height: 4),
+                  Text(q.modelAnswer!,
+                      style: GoogleFonts.quicksand(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.successDark,
+                        height: 1.4,
+                      )),
+                ],
+              ),
+            ),
+          // Auto-évaluation seulement si pas encore évalué
+          if (_wasCorrect == null) ...<Widget>[
+            const SizedBox(height: 10),
+            Text('— ta réponse était… —',
+                textAlign: TextAlign.center,
+                style: AppText.subtitle.copyWith(fontSize: 12)),
+            const SizedBox(height: 6),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: _ActionBtn(
+                    label: '✗ à revoir',
+                    primary: false,
+                    onTap: () => _selfMark(false),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _ActionBtn(
+                    label: '✓ j\'avais juste',
+                    primary: true,
+                    onTap: () => _selfMark(true),
+                  ),
+                ),
+              ],
+            ),
+          ] else ...<Widget>[
+            const SizedBox(height: 10),
+            _ActionBtn(
+              label: 'suivante →',
+              primary: true,
+              onTap: _next,
+            ),
+          ],
+        ],
+      ],
+    );
+  }
+
+  /// Pour les questions ouvertes : verrouille et affiche la réponse type.
+  /// L'évaluation (juste/à revoir) se fait par tap manuel ensuite.
+  void _revealModelAnswer() {
+    if (_locked || _sujet == null) return;
+    HapticFeedback.lightImpact();
+    setState(() {
+      _locked = true;
+      _wasCorrect = null; // sera défini par _selfMark
+    });
+  }
+
+  void _selfMark(bool right) {
+    if (_sujet == null) return;
+    final BrevetQuestion q =
+        _sujet!.exercises[_exoIdx].questions[_questIdx];
+    HapticFeedback.lightImpact();
+    AudioService.instance.play(right ? Sfx.correct : Sfx.wrong);
+    setState(() {
+      _wasCorrect = right;
+      if (right) {
+        _scoreByExo[_exoIdx] = (_scoreByExo[_exoIdx] ?? 0) + q.points;
+        _correctQuestions++;
+      }
+    });
+    _saveProgress();
   }
 
   Widget _buildFinished() {

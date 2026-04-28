@@ -727,6 +727,252 @@ class BrevetSujets {
       ],
     ),
 
+    // ─────────── Métropole — juin 2025 (HG-EMC) ───────────
+    BrevetSujet(
+      id: 'brevet-metropole-2025-hg',
+      title: 'Brevet — Métropole, juin 2025',
+      subtitle:
+          'Hist-Géo-EMC · vallée de la batterie + décolonisation + égalité',
+      emoji: '🏛️',
+      source: 'Métropole — juin 2025 (DNB HG-EMC série générale)',
+      sourceUrl:
+          'https://eduscol.education.gouv.fr/sites/default/files/document/25genhgemcme1v3pdf-116931.pdf',
+      unlockLevel: 5,
+      exercises: <BrevetExercise>[
+        BrevetExercise(
+          title: 'Exercice 1 — Géographie · Espaces productifs (20 pts)',
+          context:
+              'Thème : « Les espaces productifs et leurs évolutions ».\n\n'
+              'Document 1 — Article La Voix du Nord, 3 février 2022 : la '
+              'région Hauts-de-France devient la « vallée de la batterie ». '
+              'Trois gigafactorys s\'y implantent (Dunkerque, Douai, Douvrin). '
+              'Verkor à Dunkerque représente 2,5 milliards € d\'investissement, '
+              '~2 000 emplois directs et ~5 000 indirects.\n\n'
+              'Document 2 — Carte de la « vallée de la batterie » dans les '
+              'Hauts-de-France (cf. PDF officiel pour la carte).',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.openEnded(
+              prompt:
+                  '1. (Doc 1) Relève un extrait du texte qui définit la « gigafactory ».',
+              modelAnswer:
+                  '« Ces usines de fabrication de batteries et de leurs '
+                  'composants ». (On accepte aussi : « la première gigafactory '
+                  'de cellules de batteries bas carbone en France ».)',
+              explanation:
+                  'Une définition courte tirée du document 1, citée entre guillemets.',
+              points: 2,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '2. (Doc 1) Identifie DEUX types d\'acteurs qui participent au développement de la « vallée de la batterie ».',
+              modelAnswer:
+                  '• L\'État (le président E. Macron annonce l\'implantation).\n'
+                  '• La Région Hauts-de-France (60 millions € d\'aide).\n'
+                  '• Les entreprises privées / industriels (Verkor, '
+                  'constructeurs auto, ARIA).\n\n'
+                  'Deux types parmi ces trois sont attendus.',
+              explanation:
+                  'On distingue acteurs publics (État, Région) et privés (entreprises).',
+              points: 4,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '3. (Doc 2) Où se situe la « vallée de la batterie » ?',
+              choices: <String>[
+                'Dans le Sud-Ouest',
+                'Dans la région Hauts-de-France (Nord)',
+                'En Auvergne-Rhône-Alpes',
+                'En Île-de-France',
+              ],
+              answerIndex: 1,
+              explanation:
+                  'Dunkerque, Douai, Douvrin : tous situés dans les Hauts-de-France.',
+              points: 2,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '4. (Doc 2) Caractérise le type d\'espace productif auquel la « vallée de la batterie » appartient.',
+              modelAnswer:
+                  'Espace productif INDUSTRIEL, plus précisément un '
+                  'technopôle / pôle de compétitivité spécialisé dans la '
+                  'mobilité électrique (filière batterie + automobile). '
+                  'Logique de cluster : concentration d\'entreprises d\'un '
+                  'même secteur sur un territoire.',
+              explanation:
+                  'Mots-clés : industriel, automobile, cluster, pôle de compétitivité.',
+              points: 4,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '5. (Doc 1 + 2) Montre que la « vallée de la batterie » a des atouts qui favorisent l\'implantation des gigafactorys ET qu\'elle est un espace productif important pour la région.',
+              modelAnswer:
+                  'Atouts :\n'
+                  '• Grand port maritime de Dunkerque (ouverture mer du Nord).\n'
+                  '• Tradition industrielle automobile (main d\'œuvre qualifiée).\n'
+                  '• Réseau de transports denses (autoroutes, fret).\n'
+                  '• Soutien des pouvoirs publics (État + Région).\n\n'
+                  'Importance pour la région :\n'
+                  '• Investissement de 2,5 milliards € (Verkor).\n'
+                  '• 2 000 emplois directs + 5 000 indirects.\n'
+                  '• Renouveau industriel via l\'électrique.',
+              explanation:
+                  '2-3 atouts + 2-3 éléments d\'importance économique.',
+              points: 8,
+            ),
+          ],
+        ),
+        BrevetExercise(
+          title: 'Exercice 2 — Histoire · Le monde depuis 1945 (20 pts)',
+          context:
+              'Thème : « Le monde depuis 1945 ». Cet exercice combine un '
+              'développement construit (~20 lignes) sur l\'accès à '
+              'l\'indépendance d\'une colonie, et un travail sur des repères '
+              'historiques (frise chronologique).',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.openEnded(
+              prompt:
+                  '1. Développement construit (~20 lignes) : explique l\'accès à l\'indépendance d\'une colonie de ton choix. Précise les principaux acteurs, les étapes et les conséquences.',
+              modelAnswer:
+                  'Exemple — INDÉPENDANCE DE L\'ALGÉRIE (1962)\n\n'
+                  'Acteurs :\n'
+                  '• Le FLN (Front de Libération Nationale) côté algérien.\n'
+                  '• La France (gouvernement, IVe puis Vᵉ Rép. de De Gaulle), '
+                  'l\'armée, les pieds-noirs.\n\n'
+                  'Étapes :\n'
+                  '• 1ᵉʳ nov 1954 : « Toussaint rouge » → début de la guerre.\n'
+                  '• 1956 : intensification, bataille d\'Alger (1957).\n'
+                  '• 1958 : crise du 13 mai, retour de De Gaulle.\n'
+                  '• 1961 : putsch des généraux à Alger.\n'
+                  '• 18 mars 1962 : accords d\'Évian.\n'
+                  '• 5 juillet 1962 : indépendance proclamée.\n\n'
+                  'Conséquences :\n'
+                  '• Exode des pieds-noirs (~1 M).\n'
+                  '• Drame des harkis.\n'
+                  '• Pertes humaines lourdes.\n'
+                  '• Naissance de la République algérienne.\n'
+                  '• En France : Vᵉ Rép. consolidée, traumatisme durable.\n\n'
+                  '(Autres exemples acceptés : Inde 1947, Vietnam 1954, '
+                  'Maroc/Tunisie 1956…)',
+              explanation:
+                  'Acteurs (≥2), étapes datées (≥3), conséquences (≥2). ~20 lignes.',
+              points: 12,
+            ),
+            BrevetQuestion.qcm(
+              prompt: '2a. (Repère) Année de la chute du mur de Berlin ?',
+              choices: <String>['1985', '1989', '1991', '1995'],
+              answerIndex: 1,
+              explanation: '9 novembre 1989.',
+              points: 2,
+            ),
+            BrevetQuestion.qcm(
+              prompt: '2b. (Repère) Année de la naissance de l\'ONU ?',
+              choices: <String>['1919', '1945', '1947', '1948'],
+              answerIndex: 1,
+              explanation: 'Charte de San Francisco signée le 26 juin 1945.',
+              points: 2,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '2c. (Repère) Année de la signature du traité de Rome ?',
+              choices: <String>['1948', '1951', '1957', '1992'],
+              answerIndex: 2,
+              explanation:
+                  'Traité de Rome signé le 25 mars 1957 (création de la CEE).',
+              points: 2,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '2d. (Repère) Cite un AUTRE événement historique majeur depuis 1945 (avec son année) à placer sur la frise.',
+              modelAnswer:
+                  'Exemples acceptés (un seul) :\n'
+                  '• 1962 : indépendance de l\'Algérie.\n'
+                  '• 1968 : Mai 68 en France.\n'
+                  '• 1981 : élection de F. Mitterrand.\n'
+                  '• 2002 : passage à l\'euro fiduciaire.\n'
+                  '• 2001 : attentats du 11 septembre.\n'
+                  '• 2020 : Brexit effectif.',
+              explanation:
+                  'Un événement post-1945 + son année correctement datée.',
+              points: 2,
+            ),
+          ],
+        ),
+        BrevetExercise(
+          title: 'Exercice 3 — EMC · Égalité femmes-hommes (10 pts)',
+          context:
+              'Doc 1 — Affiche « L\'égalité professionnelle, ça se travaille ! » '
+              'du Centre Hubertine Auclert, mettant en avant la mathématicienne '
+              'Ada Lovelace.\n\n'
+              'Doc 2 — Article 1ᵉʳ de la Constitution de la Vᵉ République : '
+              'la France assure l\'égalité devant la loi de tous les citoyens. '
+              'La loi favorise l\'égal accès des femmes et des hommes aux '
+              'mandats électoraux et fonctions électives, ainsi qu\'aux '
+              'responsabilités professionnelles et sociales.',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.qcm(
+              prompt:
+                  '1. (Doc 1) Quelle inégalité l\'affiche met-elle en avant ?',
+              choices: <String>[
+                'Inégalité d\'âge à l\'embauche',
+                'Inégalité femmes-hommes (sous-représentation des femmes dans les sciences/métiers)',
+                'Inégalité de revenus régionaux',
+                'Inégalité d\'accès aux études supérieures',
+              ],
+              answerIndex: 1,
+              explanation:
+                  'L\'affiche cible l\'inégalité de genre dans le monde pro et scientifique.',
+              points: 2,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '2. (Doc 2) Relève un extrait de la Constitution qui montre que l\'égalité est une valeur de la République.',
+              modelAnswer:
+                  '« Elle assure l\'égalité devant la loi de tous les citoyens '
+                  'sans distinction d\'origine, de race ou de religion » OU '
+                  '« La loi favorise l\'égal accès des femmes et des hommes '
+                  'aux mandats électoraux et fonctions électives ».',
+              explanation:
+                  'Une citation tirée de l\'article 1ᵉʳ mentionnant explicitement l\'égalité.',
+              points: 2,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '3. L\'affiche met en avant Ada Lovelace, mathématicienne pionnière. Explique l\'intérêt de recourir à cette figure pour corriger une inégalité.',
+              modelAnswer:
+                  'Ada Lovelace (1815-1852) est considérée comme la 1ʳᵉ '
+                  'programmeuse informatique. La mettre en avant permet :\n'
+                  '• De rappeler que les femmes ont contribué très tôt aux '
+                  'sciences, alors qu\'on les en a souvent invisibilisées.\n'
+                  '• De proposer un modèle inspirant aux jeunes filles.\n'
+                  '• De déconstruire l\'idée que les sciences seraient un '
+                  'domaine « masculin par nature ».',
+              explanation:
+                  'Idée de modèle / représentation positive + déconstruction des stéréotypes.',
+              points: 2,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '4. Tu dois rédiger un discours pour le 8 mars (Journée internationale des droits des femmes). Montre que les inégalités femmes-hommes existent encore et propose DEUX idées concrètes pour sensibiliser les élèves de ton collège.',
+              modelAnswer:
+                  'Constat : malgré l\'article 1ᵉʳ de la Constitution, les '
+                  'inégalités persistent — écart salarial (~15 %), '
+                  'sous-représentation dans les filières scientifiques et '
+                  'politiques, violences faites aux femmes, partage inégal '
+                  'des tâches domestiques.\n\n'
+                  'Idées concrètes pour le collège :\n'
+                  '• Exposition « femmes pionnières » au CDI.\n'
+                  '• Atelier débat « stéréotypes de genre » en EMC.\n'
+                  '• Inviter une chercheuse / ingénieure à témoigner.\n'
+                  '• Concours d\'affiches sur l\'égalité.',
+              explanation:
+                  'Constat (chiffre / fait) + 2 idées concrètes différentes pour le collège.',
+              points: 4,
+            ),
+          ],
+        ),
+      ],
+    ),
+
     // ─────────────── Sujet 4 — Multi-disciplines ───────────────
     BrevetSujet(
       id: 'brevet-multi-2024',

@@ -56,6 +56,7 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
   bool _locked = false;
   Timer? _ticker;
   int _remaining = 0;
+  Timer? _autoNextTimer;
 
   @override
   void initState() {
@@ -67,6 +68,7 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
   @override
   void dispose() {
     _ticker?.cancel();
+    _autoNextTimer?.cancel();
     super.dispose();
   }
 
@@ -123,7 +125,8 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
       _locked = true;
       _selected = null;
     });
-    Future<void>.delayed(const Duration(milliseconds: 900), _next);
+    // Pas de réponse donnée = on laisse le temps de lire la correction.
+    _scheduleAutoNext(const Duration(milliseconds: 4500));
   }
 
   void _onPick(int i) {
@@ -137,16 +140,36 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
       _locked = true;
       if (ok) _correct++;
     });
+    // Le chrono est mis en pause dès qu'on a répondu : l'utilisateur a
+    // tout son temps pour lire l'explication.
     _ticker?.cancel();
-    // Boss : 1 erreur = fin de partie immédiate.
     if (widget.bossMode && !ok) {
-      Future<void>.delayed(const Duration(milliseconds: 1400), _finish);
+      // Boss : on garde 4 s pour lire avant la fin.
+      _autoNextTimer?.cancel();
+      _autoNextTimer = Timer(
+          const Duration(milliseconds: 4000), _finish);
       return;
     }
-    Future<void>.delayed(const Duration(milliseconds: 1100), _next);
+    // Délai plus long pour les réponses fausses (lecture de l'explication).
+    _scheduleAutoNext(ok
+        ? const Duration(milliseconds: 1100)
+        : const Duration(milliseconds: 4500));
+  }
+
+  void _scheduleAutoNext(Duration d) {
+    _autoNextTimer?.cancel();
+    _autoNextTimer = Timer(d, _next);
+  }
+
+  /// Tap manuel sur la zone : passe à la suivante immédiatement.
+  void _onTapToContinue() {
+    if (!_locked) return;
+    _autoNextTimer?.cancel();
+    _next();
   }
 
   void _next() {
+    _autoNextTimer?.cancel();
     if (!mounted || _questions == null) return;
     if (_idx + 1 >= _questions!.length) {
       _finish();
@@ -280,6 +303,30 @@ class _GameQcmScreenState extends State<GameQcmScreen> {
                 ),
                 if (_locked && q.explanation != null)
                   _Explanation(text: q.explanation!),
+                if (_locked) ...<Widget>[
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: _onTapToContinue,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Bq.accent,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'tape pour continuer →',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

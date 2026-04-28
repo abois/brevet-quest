@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -35,6 +37,13 @@ class _GameSurvivalScreenState extends State<GameSurvivalScreen> {
   int _correct = 0;
   int? _selected;
   bool _locked = false;
+  Timer? _autoNextTimer;
+
+  @override
+  void dispose() {
+    _autoNextTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -92,18 +101,32 @@ class _GameSurvivalScreenState extends State<GameSurvivalScreen> {
         _streak = 0;
       }
     });
-    Future<void>.delayed(const Duration(milliseconds: 900), () {
-      if (!mounted) return;
-      if (_lives <= 0) {
-        _finish();
-        return;
-      }
-      setState(() {
-        _current = _next();
-        _selected = null;
-        _locked = false;
-      });
+    // Auto-suivant : 900ms si correct, 4500ms si faux pour lire
+    // l'explication. Le user peut tap pour passer plus tôt.
+    _autoNextTimer?.cancel();
+    _autoNextTimer = Timer(
+      Duration(milliseconds: ok ? 900 : 4500),
+      _advance,
+    );
+  }
+
+  void _advance() {
+    _autoNextTimer?.cancel();
+    if (!mounted) return;
+    if (_lives <= 0) {
+      _finish();
+      return;
+    }
+    setState(() {
+      _current = _next();
+      _selected = null;
+      _locked = false;
     });
+  }
+
+  void _onTapToContinue() {
+    if (!_locked) return;
+    _advance();
   }
 
   Future<void> _finish() async {
@@ -247,6 +270,30 @@ class _GameSurvivalScreenState extends State<GameSurvivalScreen> {
                 ),
                 if (_locked && q.explanation != null)
                   _Explanation(text: q.explanation!),
+                if (_locked) ...<Widget>[
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: _onTapToContinue,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Bq.accent,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'tape pour continuer →',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

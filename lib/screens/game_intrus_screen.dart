@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -31,6 +32,13 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
   int _correct = 0;
   int? _selected;
   bool _locked = false;
+  Timer? _autoNextTimer;
+
+  @override
+  void dispose() {
+    _autoNextTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -76,10 +84,22 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
       _locked = true;
       if (ok) _correct++;
     });
-    Future<void>.delayed(const Duration(milliseconds: 1300), _next);
+    // 1300ms si correct, 4500ms si faux pour lire l'explication.
+    _autoNextTimer?.cancel();
+    _autoNextTimer = Timer(
+      Duration(milliseconds: ok ? 1300 : 4500),
+      _next,
+    );
+  }
+
+  void _onTapToContinue() {
+    if (!_locked) return;
+    _autoNextTimer?.cancel();
+    _next();
   }
 
   void _next() {
+    _autoNextTimer?.cancel();
     if (!mounted || _sets == null) return;
     if (_idx + 1 >= _sets!.length) {
       _finish();
@@ -234,6 +254,30 @@ class _GameIntrusScreenState extends State<GameIntrusScreen> {
                       ],
                     ),
                   ),
+                if (_locked) ...<Widget>[
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: _onTapToContinue,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Bq.accent,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'tape pour continuer →',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

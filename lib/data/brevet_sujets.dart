@@ -515,17 +515,24 @@ class BrevetSujets {
       emoji: '📘',
       source: 'Métropole — juin 2025 (DNB français série générale)',
       sourceUrl:
-          'https://eduscol.education.fr/document/68088/download',
+          'https://eduscol.education.gouv.fr/sites/default/files/document/25genfrqgcme1v1pdf-116892.pdf',
       unlockLevel: 5,
       exercises: <BrevetExercise>[
         BrevetExercise(
           title: 'Exercice 1 — Compréhension du texte',
           context:
-              'Texte support : Simone de Beauvoir, La Force de l\'âge (1960). '
-              'La narratrice s\'installe à Marseille pour son premier poste '
-              'd\'enseignante. Le texte intégral est dans le sujet officiel '
-              '(lien Eduscol ↗). Les questions ci-dessous sont une '
-              'adaptation QCM des questions à réponse rédigée du sujet réel.',
+              'Texte support : Simone de Beauvoir, La Force de l\'âge (1960).\n\n'
+              'Mise en situation (Eduscol) : « La narratrice, Simone, a vingt-trois ans. '
+              'Elle quitte sa ville natale, Paris, et arrive seule à Marseille. »\n\n'
+              'Court extrait : « Je me rappelle mon arrivée à Marseille comme si '
+              'elle avait marqué dans mon histoire un tournant absolument neuf. '
+              '[…] J\'étais là, seule, les mains vides, séparée de mon passé et '
+              'de tout ce que j\'aimais […]. Ici, je n\'existais pour personne ; '
+              'quelque part, sous un de ces toits, j\'aurais à faire quatorze '
+              'heures de cours chaque semaine […]. »\n\n'
+              '➜ Texte intégral dans le PDF officiel (Eduscol ↗ depuis la tuile). '
+              'Adaptation des questions du sujet réel ; certaines sont en QCM '
+              'pour évaluation auto, d\'autres en réponse libre avec auto-évaluation.',
           questions: <BrevetQuestion>[
             BrevetQuestion.qcm(
               prompt:
@@ -629,59 +636,98 @@ class BrevetSujets {
           ],
         ),
         BrevetExercise(
-          title: 'Exercice 3 — Grammaire & langue',
+          title: 'Exercice 3 — Grammaire & langue (18 pts)',
           context:
               'Travail sur la langue à partir du texte de Beauvoir.',
           questions: <BrevetQuestion>[
             BrevetQuestion.qcm(
               prompt:
-                  '7. « J\'aurais à faire quatorze heures de cours chaque semaine » — à quel mode/temps est conjugué « j\'aurais à faire » ?',
-              choices: <String>[
-                'Indicatif imparfait',
-                'Conditionnel présent',
-                'Subjonctif présent',
-                'Indicatif futur',
-              ],
-              answerIndex: 1,
-              explanation:
-                  '« J\'aurais » + infinitif est un conditionnel présent à valeur de futur dans le passé.',
-              points: 1,
-            ),
-            BrevetQuestion.qcm(
-              prompt:
-                  '8. Dans « les mains vides », quelle est la fonction de « vides » ?',
+                  '7a. « J\'étais là, seule, les mains vides » — quelle est la classe (nature) grammaticale de « seule » ?',
               choices: <String>[
                 'Adverbe',
-                'Épithète liée du nom « mains »',
-                'Attribut du sujet',
-                'Complément du nom',
+                'Adjectif qualificatif',
+                'Pronom',
+                'Nom commun',
               ],
               answerIndex: 1,
               explanation:
-                  '« vides » est un adjectif qualificatif épithète qui qualifie directement « mains ».',
+                  '« seule » est un adjectif qualificatif (épithète détaché de la narratrice).',
               points: 1,
             ),
             BrevetQuestion.qcm(
               prompt:
-                  '9. Réécriture : transpose « C\'était à moi de les inventer » au présent de l\'indicatif.',
+                  '7b. Pourquoi « seule » prend-il un -e final ?',
               choices: <String>[
-                'C\'est à moi de les inventer',
-                'Ce sera à moi de les inventer',
-                'C\'aurait été à moi de les inventer',
-                'Ce serait à moi de les inventer',
+                'Parce qu\'il s\'accorde avec « mains » (féminin pluriel)',
+                'Parce qu\'il s\'accorde avec la narratrice « je » (féminin singulier)',
+                'Parce que c\'est un adverbe invariable mais avec un e d\'origine',
+                'Parce qu\'il est attribut du COD',
+              ],
+              answerIndex: 1,
+              explanation:
+                  'L\'adjectif s\'accorde en genre et nombre avec le mot qu\'il qualifie : ici « je » (la narratrice, féminin singulier).',
+              points: 1,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '8b. « j\'avais rendu visite à la directrice du lycée, mon emploi du temps était fixé » — comment les deux propositions sont-elles reliées ?',
+              choices: <String>[
+                'Par une conjonction de coordination',
+                'Par un pronom relatif',
+                'Sans mot de liaison : juxtaposition (virgule)',
+                'Par une conjonction de subordination',
+              ],
+              answerIndex: 2,
+              explanation:
+                  'Les deux propositions sont seulement séparées par une virgule, sans mot de liaison : elles sont juxtaposées.',
+              points: 1,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '9a. « je m\'immobilisai en haut du grand escalier » — analyse du verbe « m\'immobilisai » : quels sont ses 3 éléments ?',
+              choices: <String>[
+                'préfixe im- + radical -mobil- + désinence -isai',
+                'auxiliaire + participe + adverbe',
+                'pronom + préposition + verbe',
+                'préfixe in- + radical -mobile- + suffixe verbal',
               ],
               answerIndex: 0,
               explanation:
-                  'Le présent de l\'indicatif de « c\'était » est « c\'est ».',
+                  'préfixe « im- » (négation), radical « -mobil- » (sur « mobile »), terminaison « -isai » (verbe du 1ᵉʳ groupe au passé simple).',
               points: 1,
             ),
-            BrevetQuestion.trueFalse(
+            BrevetQuestion.qcm(
               prompt:
-                  '10. Dans « emploi du temps », « du temps » est un complément du nom « emploi ».',
-              answer: true,
+                  '9b. Quel mot appartient à la même famille que « immobiliser » ?',
+              choices: <String>[
+                'mobiliser',
+                'immobile',
+                'mobilité',
+                'tous les précédents',
+              ],
+              answerIndex: 3,
               explanation:
-                  'Vrai : « du temps » complète le nom « emploi » et précise son sens.',
+                  'Tous ces mots partagent le radical « mobil- » (de « mouvoir »).',
               points: 1,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '10. Réécriture (10 pts). Réécris le passage en remplaçant « je » par « nous » (la narratrice et une amie) :\n\n'
+                  '« J\'étais là, seule, les mains vides, séparée de mon passé '
+                  'et de tout ce que j\'aimais, et je regardais la grande cité '
+                  'inconnue où j\'allais sans secours tailler au jour le jour '
+                  'ma vie. Jusqu\'alors, j\'avais dépendu étroitement d\'autrui ; '
+                  'on m\'avait imposé des cadres et des buts. »',
+              modelAnswer:
+                  '« Nous étions là, seules, les mains vides, séparées de notre '
+                  'passé et de tout ce que nous aimions, et nous regardions la '
+                  'grande cité inconnue où nous allions sans secours tailler au '
+                  'jour le jour notre vie. Jusqu\'alors, nous avions dépendu '
+                  'étroitement d\'autrui ; on nous avait imposé des cadres et '
+                  'des buts. »',
+              explanation:
+                  'Toutes les marques de la 1ʳᵉ pers du sing passent à la 1ʳᵉ pers du pluriel : « j\' / je → nous », accords en pluriel féminin (« seules », « séparées »), possessifs « mon/ma → notre », « m\' → nous », imparfait au pluriel.',
+              points: 10,
             ),
           ],
         ),

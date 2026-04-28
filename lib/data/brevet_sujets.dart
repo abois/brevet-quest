@@ -4,6 +4,11 @@ import 'problemes_data.dart';
 /// ou ouverte (rédaction libre + auto-évaluation par le joueur).
 enum BrevetQuestionKind { numerical, qcm, trueFalse, openEnded }
 
+/// Regroupement des sujets de brevet :
+/// - `officialFull` : épreuve officielle complète (annale).
+/// - `extracts` : sujet original / questions extraites pour entraînement.
+enum BrevetCategory { officialFull, extracts }
+
 /// Une question d'un exercice de brevet blanc.
 ///
 /// Pour `kind == numerical` : utiliser `answer` + `tolerance` + `unit`.
@@ -116,6 +121,7 @@ class BrevetSujet {
     required this.exercises,
     this.source,
     this.sourceUrl,
+    this.category = BrevetCategory.extracts,
     this.unlockLevel = 3,
   });
 
@@ -128,6 +134,7 @@ class BrevetSujet {
   /// dans la tuile et le bilan.
   final String? source;
   final String? sourceUrl;
+  final BrevetCategory category;
   final int unlockLevel;
 
   int get totalPoints =>
@@ -516,6 +523,7 @@ class BrevetSujets {
       source: 'Métropole — juin 2025 (DNB français série générale)',
       sourceUrl:
           'https://eduscol.education.gouv.fr/sites/default/files/document/25genfrqgcme1v1pdf-116892.pdf',
+      category: BrevetCategory.officialFull,
       unlockLevel: 5,
       exercises: <BrevetExercise>[
         BrevetExercise(
@@ -737,6 +745,7 @@ class BrevetSujets {
       source: 'Métropole — juin 2025 (DNB HG-EMC série générale)',
       sourceUrl:
           'https://eduscol.education.gouv.fr/sites/default/files/document/25genhgemcme1v3pdf-116931.pdf',
+      category: BrevetCategory.officialFull,
       unlockLevel: 5,
       exercises: <BrevetExercise>[
         BrevetExercise(
@@ -967,6 +976,394 @@ class BrevetSujets {
               explanation:
                   'Constat (chiffre / fait) + 2 idées concrètes différentes pour le collège.',
               points: 4,
+            ),
+          ],
+        ),
+      ],
+    ),
+
+    // ─────────── Métropole — juin 2025 (Maths) ──────────
+    BrevetSujet(
+      id: 'brevet-metropole-2025-maths',
+      title: 'Brevet — Métropole, juin 2025',
+      subtitle: 'Maths · probas, Pythagore, fonctions, programme de calcul',
+      emoji: '🧮',
+      source: 'Métropole — juin 2025 (DNB maths série générale)',
+      sourceUrl:
+          'https://eduscol.education.gouv.fr/sites/default/files/document/25genmatmeag1pdf-125624.pdf',
+      category: BrevetCategory.officialFull,
+      unlockLevel: 5,
+      exercises: <BrevetExercise>[
+        BrevetExercise(
+          title: 'Exercice 1 — Probabilités (20 pts)',
+          context:
+              'On dispose de deux urnes (boules indiscernables au toucher) :\n'
+              '• Urne A : 6 boules numérotées 7 ; 10 ; 12 ; 15 ; 24 ; 30.\n'
+              '• Urne B : 9 boules numérotées 2 ; 5 ; 6 ; 8 ; 17 ; 18 ; 21 ; 22 ; 25.',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.numerical(
+              prompt:
+                  '1. On tire une boule dans l\'urne A. Probabilité d\'obtenir un nombre PAIR ? (Donne sous forme décimale au centième.)',
+              answer: 0.67,
+              tolerance: 0.01,
+              unit: '',
+              explanation:
+                  'Pairs dans A : 10, 12, 24, 30 → 4/6 = 2/3 ≈ 0,67.',
+              points: 4,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '2. Justifie que la probabilité d\'obtenir un nombre premier en tirant dans l\'urne B est de 1/3.',
+              modelAnswer:
+                  'Nombres premiers dans B : 2, 5, 17 (3 valeurs).\n'
+                  'P(premier) = 3/9 = 1/3. ✓',
+              explanation:
+                  'Identifier les premiers (2, 5, 17) puis simplifier 3/9 = 1/3.',
+              points: 4,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '3. Quelle urne contient le plus grand nombre de boules dont le numéro est un multiple de 6 ?',
+              choices: <String>[
+                'Urne A (3 multiples : 12, 24, 30)',
+                'Urne B (2 multiples : 6, 18)',
+                'Elles en ont autant',
+                'Aucune des deux',
+              ],
+              answerIndex: 0,
+              explanation:
+                  'A : 12, 24, 30 (3). B : 6, 18 (2). A en a plus.',
+              points: 3,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '4. Démontre que la probabilité d\'obtenir un nombre supérieur ou égal à 20 est la même quelle que soit l\'urne choisie.',
+              modelAnswer:
+                  'Urne A : nombres ≥ 20 → 24 ; 30 → 2 cas. P_A = 2/6 = 1/3.\n'
+                  'Urne B : nombres ≥ 20 → 21 ; 22 ; 25 → 3 cas. P_B = 3/9 = 1/3.\n'
+                  'Donc P_A = P_B = 1/3 : les probabilités sont égales.',
+              explanation:
+                  'Compter les cas favorables dans chaque urne, simplifier 2/6 et 3/9.',
+              points: 4,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '5. On ajoute une boule numérotée 50 dans CHAQUE urne. La probabilité d\'obtenir un résultat ≥ 20 est-elle toujours égale quelle que soit l\'urne ?',
+              modelAnswer:
+                  'Urne A (7 boules) : ≥ 20 → 24, 30, 50 → 3 cas. P_A = 3/7 ≈ 0,429.\n'
+                  'Urne B (10 boules) : ≥ 20 → 21, 22, 25, 50 → 4 cas. P_B = 4/10 = 2/5 = 0,4.\n'
+                  '3/7 ≠ 2/5 → les probabilités NE SONT PLUS égales.',
+              explanation:
+                  'Comparer 3/7 et 4/10 (passer en décimal ou même dénominateur).',
+              points: 5,
+            ),
+          ],
+        ),
+        BrevetExercise(
+          title: 'Exercice 2 — Aquathlon, Pythagore & Thalès (23 pts)',
+          context:
+              'Aquathlon : course à pied + natation.\n\n'
+              'Course à pied (parcours ACDEB) :\n'
+              '• A, C, B alignés ; A, D, E alignés.\n'
+              '• ADC est rectangle en A.\n'
+              '• AC = 480 m ; CB = 120 m ; AE = 250 m ; DE = 50 m.\n\n'
+              'Natation (200 m). Temps des 9 élèves :\n'
+              '5 min 30 s ; 5 min 45 s ; 5 min 49 s ; 5 min 50 s ;\n'
+              '6 min 00 s ; 6 min 11 s ; 6 min 12 s ; 6 min 20 s ; 6 min 40 s.',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.openEnded(
+              prompt:
+                  '1. Justifie que AD = 200 m.',
+              modelAnswer:
+                  'D est sur [AE], donc AD = AE − DE = 250 − 50 = 200 m.',
+              explanation:
+                  'D est entre A et E sur une même droite.',
+              points: 2,
+            ),
+            BrevetQuestion.numerical(
+              prompt:
+                  '2. Calcule la longueur CD (en m). [Triangle ACD rectangle en A, AC = 480, AD = 200]',
+              answer: 520,
+              tolerance: 0.5,
+              unit: 'm',
+              explanation:
+                  'CD² = AC² + AD² = 480² + 200² = 230 400 + 40 000 = 270 400 ; CD = √270 400 = 520 m.',
+              points: 5,
+              schema: RightTriangleSchema(legA: '480', legB: '200', hypo: '?'),
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '3a. Les droites (CD) et (BE) sont-elles parallèles ?',
+              choices: <String>[
+                'Oui (Thalès réciproque : AC/AB = AD/AE)',
+                'Non',
+                'On ne peut pas conclure',
+                'Seulement si CB = DE',
+              ],
+              answerIndex: 0,
+              explanation:
+                  'AC/AB = 480/600 = 4/5 et AD/AE = 200/250 = 4/5. Les rapports sont égaux et les points sont alignés dans le même ordre → (CD)//(BE).',
+              points: 4,
+            ),
+            BrevetQuestion.numerical(
+              prompt:
+                  '3b. Calcule la mesure de l\'angle ACD au degré près.',
+              answer: 23,
+              tolerance: 0.6,
+              unit: '°',
+              explanation:
+                  'tan(ACD) = AD/AC = 200/480 ≈ 0,417 ; ACD ≈ arctan(0,417) ≈ 22,6° ≈ 23°.',
+              points: 4,
+              schema: RightTriangleTrigSchema(
+                angleLabel: '?',
+                adjacent: '480',
+                opposite: '200',
+              ),
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '3c. Le parcours est validé si (CD)//(BE) ET angle ACD > 20°. Le parcours est-il validé ?',
+              choices: <String>[
+                'Oui, les deux conditions sont remplies',
+                'Non, les droites ne sont pas parallèles',
+                'Non, l\'angle est inférieur à 20°',
+                'Non, aucune condition n\'est remplie',
+              ],
+              answerIndex: 0,
+              explanation:
+                  '(CD)//(BE) ✓ et angle ACD ≈ 22,6° > 20° ✓. Parcours validé.',
+              points: 2,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '4. Temps médian de la série natation ?',
+              choices: <String>[
+                '5 min 50 s',
+                '6 min 00 s',
+                '6 min 11 s',
+                '6 min 12 s',
+              ],
+              answerIndex: 1,
+              explanation:
+                  'Série triée à 9 termes ; médiane = 5ᵉ valeur = 6 min 00 s.',
+              points: 3,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '5. Un poisson rouge nage à 5 km/h. Nage-t-il plus vite que l\'élève le plus rapide ?',
+              modelAnswer:
+                  'Élève le plus rapide : 200 m en 5 min 30 s = 330 s.\n'
+                  'Vitesse = 200 / 330 ≈ 0,606 m/s ≈ 0,606 × 3,6 ≈ 2,18 km/h.\n'
+                  'Le poisson rouge (5 km/h) nage plus vite que l\'élève le plus rapide.',
+              explanation:
+                  'Conversion m/s → km/h : multiplier par 3,6. Comparer à 5 km/h.',
+              points: 3,
+            ),
+          ],
+        ),
+        BrevetExercise(
+          title: 'Exercice 3 — QCM (18 pts)',
+          context:
+              'Questionnaire à choix multiples, 6 questions, 3 pts chacune. '
+              'Pour les questions avec figures (Q2, Q4, Q6), consulte le PDF '
+              'officiel pour les schémas.',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.qcm(
+              prompt:
+                  'Q1. 3 melons coûtent 8,40 €. Combien coûtent 5 melons ?',
+              choices: <String>['16,40 €', '42 €', '14 €', '10,40 €'],
+              answerIndex: 2,
+              explanation:
+                  '1 melon = 8,40/3 = 2,80 € ; 5 melons = 14 €.',
+              points: 3,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  'Q3. Un article coûte 350 €. Son prix augmente de 20 %. Nouveau prix ?',
+              choices: <String>['420 €', '330 €', '370 €', '280 €'],
+              answerIndex: 0,
+              explanation: '350 × 1,20 = 420 €.',
+              points: 3,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  'Q5. Forme développée et réduite de (2x + 3)(x − 4) ?',
+              choices: <String>[
+                '2x² − 5x − 12',
+                '2x² − 11x − 12',
+                '2x² − 12',
+                '3x − 1',
+              ],
+              answerIndex: 0,
+              explanation:
+                  '(2x + 3)(x − 4) = 2x² − 8x + 3x − 12 = 2x² − 5x − 12.',
+              points: 3,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  'Q2 (avec figure). Quelle transformation permet de passer de la figure 1 à la figure 2 (cf. PDF) ?',
+              modelAnswer:
+                  'Réponse type : une rotation. (Voir le sujet officiel pour la figure et confirmer.)',
+              explanation:
+                  'À déterminer en visualisant les deux figures.',
+              points: 3,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  'Q4 (avec figure). Aire du triangle rectangle ABC ? (Cf. dimensions sur le PDF.)',
+              modelAnswer:
+                  'Aire = (base × hauteur) / 2 — relève les deux côtés de l\'angle droit dans le PDF.',
+              explanation:
+                  'Sans la figure, à compléter en consultant le PDF.',
+              points: 3,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  'Q6 (avec figure). Volume de la pyramide à base rectangulaire ? (Cf. dimensions sur le PDF.)',
+              modelAnswer:
+                  'V = (Aire de base × hauteur) / 3.',
+              explanation:
+                  'Sans la figure, à compléter en consultant le PDF.',
+              points: 3,
+            ),
+          ],
+        ),
+        BrevetExercise(
+          title: 'Exercice 4 — Programmes de calcul (20 pts)',
+          context:
+              'Programme de Zoé :\n'
+              '• Choisir un nombre.\n'
+              '• Soustraire 4.\n'
+              '• Multiplier par 2.\n'
+              '• Ajouter 8.\n\n'
+              'Programme de Fred (Scratch) — équivalent à f(x) = 20x + 50.',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.numerical(
+              prompt:
+                  '1. Vérifie : si on choisit 10, le programme de Zoé donne ?',
+              answer: 20,
+              tolerance: 0.01,
+              unit: '',
+              explanation: '10 − 4 = 6 ; 6 × 2 = 12 ; 12 + 8 = 20.',
+              points: 2,
+            ),
+            BrevetQuestion.numerical(
+              prompt:
+                  '2. Avec le programme de Zoé, en partant de −7, on obtient ?',
+              answer: -14,
+              tolerance: 0.01,
+              unit: '',
+              explanation: '−7 − 4 = −11 ; −11 × 2 = −22 ; −22 + 8 = −14.',
+              points: 3,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '3. Zoé prétend que son programme est « magique » : le résultat est toujours le DOUBLE du nombre de départ. A-t-elle raison ?',
+              modelAnswer:
+                  'Soit x le nombre de départ.\n'
+                  '(x − 4) × 2 + 8 = 2x − 8 + 8 = 2x.\n'
+                  'Le résultat vaut bien 2x = double du nombre de départ. Zoé a raison.',
+              explanation:
+                  'Calcul algébrique avec x : développer puis simplifier.',
+              points: 4,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '4. Démontre que le programme de Fred avec x donne 20x + 50. (Voir le programme Scratch sur le PDF.)',
+              modelAnswer:
+                  'Sans le détail Scratch, l\'idée : remplacer chaque opération '
+                  'du programme par son effet sur x, puis développer.\n'
+                  'Si Fred fait par exemple : x → x×4 → +10 → ×5, alors '
+                  '(4x + 10) × 5 = 20x + 50. ✓',
+              explanation:
+                  'À détailler avec le programme Scratch exact (cf. PDF).',
+              points: 4,
+            ),
+            BrevetQuestion.numerical(
+              prompt:
+                  '5. Quel nombre faut-il choisir pour que le programme de Fred renvoie 75 ?',
+              answer: 1.25,
+              tolerance: 0.01,
+              unit: '',
+              explanation: '20x + 50 = 75 → 20x = 25 → x = 25/20 = 1,25.',
+              points: 3,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '6. Modifie la 6ᵉ ligne du programme de Fred pour que le résultat soit toujours 20× le nombre de départ.',
+              modelAnswer:
+                  'Il faut retirer le terme « + 50 » du résultat final. Sur Scratch, '
+                  'remplacer la ligne qui ajoute 50 par « ajouter 0 » (ou la '
+                  'supprimer / soustraire 50 selon la structure du programme). '
+                  'Le résultat devient alors 20x.',
+              explanation:
+                  'L\'idée : annuler le terme constant + 50.',
+              points: 4,
+            ),
+          ],
+        ),
+        BrevetExercise(
+          title: 'Exercice 5 — Achat ou Location ? (19 pts)',
+          context:
+              'Un garage propose 2 options :\n'
+              '• Achat : 22 400 € + assurance 75 €/mois.\n'
+              '• Location : 425 €/mois (assurance comprise).',
+          questions: <BrevetQuestion>[
+            BrevetQuestion.openEnded(
+              prompt:
+                  '1. Montre qu\'avec l\'option Achat, la dépense à la fin de la 1ʳᵉ année est de 23 300 €.',
+              modelAnswer:
+                  'Dépense = prix d\'achat + assurance × 12 mois\n'
+                  '= 22 400 + 75 × 12 = 22 400 + 900 = 23 300 €. ✓',
+              explanation:
+                  'Prix d\'achat fixe + 12 mois d\'assurance.',
+              points: 3,
+            ),
+            BrevetQuestion.numerical(
+              prompt:
+                  '2. Après 36 mois, économie réalisée si le client choisit la Location plutôt que l\'Achat (en €) ?',
+              answer: 9800,
+              tolerance: 1,
+              unit: '€',
+              explanation:
+                  'Achat sur 36 mois : 22 400 + 75 × 36 = 25 100 €.\n'
+                  'Location sur 36 mois : 425 × 36 = 15 300 €.\n'
+                  'Économie = 25 100 − 15 300 = 9 800 €.',
+              points: 5,
+            ),
+            BrevetQuestion.qcm(
+              prompt:
+                  '3. Formule à saisir dans la cellule B3 (durée en mois en B2) pour calculer la dépense Location, étendue de B3 à F3 ?',
+              choices: <String>[
+                '=425*B2',
+                '=B2*425+22400',
+                '=B2+425',
+                '=425/B2',
+              ],
+              answerIndex: 0,
+              explanation:
+                  'Location = 425 € × nombre de mois ; la formule recopiée fera B3=425*B2, C3=425*C2, etc.',
+              points: 3,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '4. Donne l\'expression de f(x) qui calcule la dépense correspondant à l\'option Achat (x = nombre de mois).',
+              modelAnswer:
+                  'f(x) = 22 400 + 75x.\n'
+                  '(Coût fixe d\'achat + 75 € d\'assurance par mois.)',
+              explanation:
+                  'Modèle affine : ordonnée à l\'origine (achat) + pente (assurance/mois).',
+              points: 3,
+            ),
+            BrevetQuestion.numerical(
+              prompt:
+                  '5. À partir de combien de mois l\'option Achat devient-elle plus avantageuse que la Location ? (Au mois près.)',
+              answer: 64,
+              tolerance: 1,
+              unit: 'mois',
+              explanation:
+                  '22 400 + 75x = 425x → 22 400 = 350x → x = 64 mois.',
+              points: 5,
             ),
           ],
         ),

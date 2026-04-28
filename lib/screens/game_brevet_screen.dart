@@ -282,46 +282,78 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
           if (_resumable != null) _buildResumeBanner(_resumable!),
           if (_resumable != null) const SizedBox(height: 8),
           Expanded(
-            child: ListView.separated(
-              physics: const BouncingScrollPhysics(),
-              itemCount: BrevetSujets.all.length,
-              separatorBuilder: (BuildContext _, int _) =>
-                  const SizedBox(height: 10),
-              itemBuilder: (BuildContext ctx, int i) {
-                final BrevetSujet s = BrevetSujets.all[i];
-                final bool unlocked = s.isUnlocked(level);
-                return _SujetTile(
-                  sujet: s,
-                  unlocked: unlocked,
-                  userLevel: level,
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    if (unlocked) {
-                      _openModeChoice(s);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          backgroundColor: Bq.accentDeep,
-                          duration: const Duration(seconds: 2),
-                          content: Text(
-                            '${s.emoji} ${s.title} se débloque au niveau ${s.unlockLevel} '
-                            '(tu es niveau $level).',
-                            style: GoogleFonts.quicksand(
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                );
-              },
-            ),
+            child: _buildGroupedSujetList(level),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGroupedSujetList(int level) {
+    final List<BrevetSujet> official = BrevetSujets.all
+        .where((BrevetSujet s) => s.category == BrevetCategory.officialFull)
+        .toList();
+    final List<BrevetSujet> extras = BrevetSujets.all
+        .where((BrevetSujet s) => s.category == BrevetCategory.extracts)
+        .toList();
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      children: <Widget>[
+        if (official.isNotEmpty) ...<Widget>[
+          _SectionHeader(
+            title: 'Épreuves officielles',
+            subtitle: 'Sujets complets des annales DNB',
+          ),
+          const SizedBox(height: 8),
+          for (int i = 0; i < official.length; i++) ...<Widget>[
+            _sujetTileFor(official[i], level),
+            if (i < official.length - 1) const SizedBox(height: 10),
+          ],
+          const SizedBox(height: 18),
+        ],
+        if (extras.isNotEmpty) ...<Widget>[
+          _SectionHeader(
+            title: 'Sujets d\'entraînement',
+            subtitle: 'Questions extraites pour s\'entraîner',
+          ),
+          const SizedBox(height: 8),
+          for (int i = 0; i < extras.length; i++) ...<Widget>[
+            _sujetTileFor(extras[i], level),
+            if (i < extras.length - 1) const SizedBox(height: 10),
+          ],
+        ],
+      ],
+    );
+  }
+
+  Widget _sujetTileFor(BrevetSujet s, int level) {
+    final bool unlocked = s.isUnlocked(level);
+    return _SujetTile(
+      sujet: s,
+      unlocked: unlocked,
+      userLevel: level,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        if (unlocked) {
+          _openModeChoice(s);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Bq.accentDeep,
+              duration: const Duration(seconds: 2),
+              content: Text(
+                '${s.emoji} ${s.title} se débloque au niveau ${s.unlockLevel} '
+                '(tu es niveau $level).',
+                style: GoogleFonts.quicksand(
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -658,7 +690,8 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                       ],
                     ),
                   ),
-                  if (_locked) ...<Widget>[
+                  if (_locked &&
+                      q.kind != BrevetQuestionKind.openEnded) ...<Widget>[
                     const SizedBox(height: 12),
                     _ResultBanner(
                       ok: _wasCorrect ?? false,
@@ -1463,6 +1496,39 @@ class _ModeButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: GoogleFonts.quicksand(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+            color: Bq.accent,
+            letterSpacing: 1.0,
+          ),
+        ),
+        Text(
+          subtitle,
+          style: GoogleFonts.quicksand(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: Bq.textOnBg.withValues(alpha: 0.7),
+          ),
+        ),
+      ],
     );
   }
 }

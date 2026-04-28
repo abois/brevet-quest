@@ -559,7 +559,8 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                     ],
                     const SizedBox(height: 12),
                   ],
-                  // Contexte de l'exercice
+                  // Contexte de l'exercice (sélectionnable pour faciliter
+                  // le copier-coller en réponse).
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -570,7 +571,7 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                         width: 1.5,
                       ),
                     ),
-                    child: Text(
+                    child: SelectableText(
                       exo.context,
                       style: GoogleFonts.quicksand(
                         fontSize: 13,
@@ -580,6 +581,33 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                       ),
                     ),
                   ),
+                  if (sujet.sourceUrl != null) ...<Widget>[
+                    const SizedBox(height: 6),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: () async {
+                          final Uri uri = Uri.parse(sujet.sourceUrl!);
+                          await launchUrl(uri,
+                              mode: LaunchMode.externalApplication);
+                        },
+                        icon: const Icon(Icons.picture_as_pdf, size: 16),
+                        label: Text(
+                          'ouvrir le sujet officiel',
+                          style: GoogleFonts.quicksand(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Bq.accent,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   if (q.schema != null) ...<Widget>[
                     ProblemeSchemaView(schema: q.schema!),

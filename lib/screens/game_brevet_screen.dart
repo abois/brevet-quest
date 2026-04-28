@@ -80,9 +80,6 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
       _phase = _Phase.playing;
       _resetQuestion();
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _focus.requestFocus();
-    });
   }
 
   void _resetQuestion() {
@@ -146,9 +143,6 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
     } else {
       _finish();
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _focus.requestFocus();
-    });
   }
 
   Future<void> _finish() async {

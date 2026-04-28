@@ -62,9 +62,6 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
     );
     if (!mounted) return;
     setState(() => _problems = picked);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _focus.requestFocus();
-    });
   }
 
   @override
@@ -108,9 +105,6 @@ class _GameProblemesScreenState extends State<GameProblemesScreen> {
       _wasCorrect = null;
       _userAnswer = null;
       _ctrl.clear();
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _focus.requestFocus();
     });
   }
 

@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../data/brevet_sujets.dart';
 import '../models/daily_quest.dart';
 import '../services/audio_service.dart';
+import '../services/brevet_progress_service.dart';
 import '../services/progress_service.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
@@ -23,7 +24,7 @@ class GameBrevetScreen extends StatefulWidget {
   State<GameBrevetScreen> createState() => _GameBrevetScreenState();
 }
 
-enum _Phase { picking, playing, finished }
+enum _Phase { picking, choosingMode, playing, finished }
 
 class _GameBrevetScreenState extends State<GameBrevetScreen> {
   final TextEditingController _ctrl = TextEditingController();
@@ -33,6 +34,9 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
   BrevetSujet? _sujet;
   int _exoIdx = 0;
   int _questIdx = 0;
+
+  /// Si non-null : on joue UN seul exercice (à cet index), pas l'épreuve.
+  int? _singleExoIdx;
 
   /// Points obtenus, par index d'exercice.
   final Map<int, int> _scoreByExo = <int, int>{};
@@ -45,11 +49,42 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
   double? _userAnswer;
   int? _userChoiceIdx;
 
+  /// Progression chargée depuis le disque, proposée à la reprise.
+  BrevetProgress? _resumable;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadResumable();
+  }
+
+  Future<void> _loadResumable() async {
+    final BrevetProgress? p = await BrevetProgressService.load();
+    if (!mounted || p == null) return;
+    setState(() => _resumable = p);
+  }
+
   @override
   void dispose() {
     _ctrl.dispose();
     _focus.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveProgress() async {
+    if (_sujet == null || _singleExoIdx != null) return;
+    await BrevetProgressService.save(BrevetProgress(
+      sujetId: _sujet!.id,
+      exoIdx: _exoIdx,
+      questIdx: _questIdx,
+      scoreByExo: Map<int, int>.of(_scoreByExo),
+      correctQuestions: _correctQuestions,
+    ));
+  }
+
+  Future<void> _clearProgress() async {
+    await BrevetProgressService.clear();
+    if (mounted) setState(() => _resumable = null);
   }
 
   // ── helpers ────────────────────────────────────────────────────────
@@ -70,13 +105,41 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
 
   // ── flow ───────────────────────────────────────────────────────────
 
-  void _start(BrevetSujet sujet) {
+  void _openModeChoice(BrevetSujet sujet) {
     setState(() {
       _sujet = sujet;
-      _exoIdx = 0;
+      _phase = _Phase.choosingMode;
+    });
+  }
+
+  void _start(BrevetSujet sujet, {int? singleExoIdx}) {
+    setState(() {
+      _sujet = sujet;
+      _exoIdx = singleExoIdx ?? 0;
       _questIdx = 0;
+      _singleExoIdx = singleExoIdx;
       _scoreByExo.clear();
       _correctQuestions = 0;
+      _phase = _Phase.playing;
+      _resetQuestion();
+    });
+  }
+
+  void _resume(BrevetProgress p) {
+    final BrevetSujet sujet = BrevetSujets.all.firstWhere(
+      (BrevetSujet s) => s.id == p.sujetId,
+      orElse: () => BrevetSujets.all.first,
+    );
+    if (sujet.id != p.sujetId) return;
+    setState(() {
+      _sujet = sujet;
+      _exoIdx = p.exoIdx;
+      _questIdx = p.questIdx;
+      _singleExoIdx = null;
+      _scoreByExo
+        ..clear()
+        ..addAll(p.scoreByExo);
+      _correctQuestions = p.correctQuestions;
       _phase = _Phase.playing;
       _resetQuestion();
     });
@@ -124,6 +187,7 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
         _correctQuestions++;
       }
     });
+    _saveProgress();
   }
 
   void _next() {
@@ -134,15 +198,19 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
         _questIdx++;
         _resetQuestion();
       });
-    } else if (_exoIdx + 1 < _sujet!.exercises.length) {
+    } else if (_singleExoIdx == null &&
+        _exoIdx + 1 < _sujet!.exercises.length) {
+      // En mode épreuve complète : on passe à l'exercice suivant.
       setState(() {
         _exoIdx++;
         _questIdx = 0;
         _resetQuestion();
       });
     } else {
+      // Fin (épreuve ou exercice unique terminé).
       _finish();
     }
+    _saveProgress();
   }
 
   Future<void> _finish() async {
@@ -159,10 +227,10 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
     );
     if (!mounted) return;
     setState(() => _phase = _Phase.finished);
-    // Si l'utilisateur a level-up ou débloqué un badge, on pousse aussi
-    // le ResultScreen pour le feedback. Mais on garde l'écran de bilan
-    // brevet ici, l'utilisateur peut faire « accueil → » directement.
-    // On joue juste le son et on garde la MAJ XP en arrière-plan.
+    // Une épreuve terminée → on efface la progression sauvegardée.
+    if (_singleExoIdx == null) {
+      await _clearProgress();
+    }
     if (record.leveledUp) AudioService.instance.play(Sfx.levelUp);
   }
 
@@ -179,6 +247,7 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
         child: SafeArea(
           child: switch (_phase) {
             _Phase.picking => _buildPicker(),
+            _Phase.choosingMode => _buildModeChoice(),
             _Phase.playing => _buildPlaying(),
             _Phase.finished => _buildFinished(),
           },
@@ -209,7 +278,9 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
             '${BrevetSujets.all.length} sujets · note /20 · XP ×2',
             style: AppText.subtitle,
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
+          if (_resumable != null) _buildResumeBanner(_resumable!),
+          if (_resumable != null) const SizedBox(height: 8),
           Expanded(
             child: ListView.separated(
               physics: const BouncingScrollPhysics(),
@@ -226,7 +297,7 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                   onTap: () {
                     HapticFeedback.selectionClick();
                     if (unlocked) {
-                      _start(s);
+                      _openModeChoice(s);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -245,6 +316,147 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                       );
                     }
                   },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResumeBanner(BrevetProgress p) {
+    final BrevetSujet? sujet = BrevetSujets.all
+        .where((BrevetSujet s) => s.id == p.sujetId)
+        .firstOrNull;
+    if (sujet == null) return const SizedBox.shrink();
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: ThemeService.instance.preset.statsGradient),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: <Widget>[
+          const Text('⏸', style: TextStyle(fontSize: 22)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Reprendre ${sujet.title} ?',
+                  style: GoogleFonts.quicksand(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  'Exo ${p.exoIdx + 1} · question ${p.questIdx + 1} · '
+                  '${p.correctQuestions} bonnes',
+                  style: GoogleFonts.quicksand(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.selectionClick();
+              _resume(p);
+            },
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'reprendre →',
+                style: GoogleFonts.quicksand(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  color: Bq.accentDeep,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          GestureDetector(
+            onTap: () async {
+              HapticFeedback.selectionClick();
+              await _clearProgress();
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(6),
+              child: Icon(Icons.close, size: 18, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModeChoice() {
+    final BrevetSujet sujet = _sujet!;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              PillButton(
+                label: '←',
+                onTap: () => setState(() => _phase = _Phase.picking),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(sujet.title, style: AppText.title),
+          const SizedBox(height: 2),
+          Text(sujet.subtitle, style: AppText.subtitle),
+          if (sujet.source != null) ...<Widget>[
+            const SizedBox(height: 4),
+            Text('📎 ${sujet.source}',
+                style: GoogleFonts.quicksand(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Bq.textOnBg.withValues(alpha: 0.7),
+                )),
+          ],
+          const SizedBox(height: 18),
+          _ModeButton(
+            emoji: '📜',
+            title: 'Épreuve complète',
+            subtitle:
+                '${sujet.exercises.length} exercices · ${sujet.totalQuestions} questions · ${sujet.totalPoints} pts · note /20',
+            onTap: () => _start(sujet),
+          ),
+          const SizedBox(height: 12),
+          Text('— ou un seul exercice —',
+              style: AppText.subtitle.copyWith(fontSize: 12)),
+          const SizedBox(height: 8),
+          Expanded(
+            child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              itemCount: sujet.exercises.length,
+              separatorBuilder: (BuildContext _, int _) =>
+                  const SizedBox(height: 8),
+              itemBuilder: (BuildContext ctx, int i) {
+                final BrevetExercise exo = sujet.exercises[i];
+                return _ModeButton(
+                  emoji: '✏️',
+                  title: exo.title,
+                  subtitle:
+                      '${exo.questions.length} questions · ${exo.totalPoints} pts',
+                  onTap: () => _start(sujet, singleExoIdx: i),
                 );
               },
             ),
@@ -970,6 +1182,77 @@ class _ChoiceButton extends StatelessWidget {
               color: fg,
               height: 1.3,
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ModeButton extends StatelessWidget {
+  const _ModeButton({
+    required this.emoji,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final String emoji;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Bq.cardBg,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: Bq.accent.withValues(alpha: 0.5),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            children: <Widget>[
+              Text(emoji, style: const TextStyle(fontSize: 26)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(title,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          color: Bq.textOnBg,
+                        )),
+                    Text(subtitle,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Bq.textOnBg.withValues(alpha: 0.7),
+                        )),
+                  ],
+                ),
+              ),
+              Text('→',
+                  style: GoogleFonts.quicksand(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: Bq.accent,
+                  )),
+            ],
           ),
         ),
       ),

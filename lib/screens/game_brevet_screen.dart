@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data/brevet_sujets.dart';
 import '../models/daily_quest.dart';
@@ -42,6 +43,7 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
   bool _locked = false;
   bool? _wasCorrect;
   double? _userAnswer;
+  int? _userChoiceIdx;
 
   @override
   void dispose() {
@@ -87,22 +89,39 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
     _locked = false;
     _wasCorrect = null;
     _userAnswer = null;
+    _userChoiceIdx = null;
     _ctrl.clear();
   }
 
-  void _submit() {
+  /// Validation pour les questions numériques.
+  void _submitNumeric() {
     if (_locked || _sujet == null) return;
     final double? v = _parse(_ctrl.text);
     if (v == null) return;
     final BrevetQuestion q =
         _sujet!.exercises[_exoIdx].questions[_questIdx];
-    final bool ok = (v - q.answer).abs() <= q.tolerance;
+    final bool ok = (v - q.answer!).abs() <= q.tolerance!;
+    _registerAnswer(ok, q, userAnswerNum: v);
+  }
+
+  /// Validation pour QCM / Vrai-Faux.
+  void _submitChoice(int idx) {
+    if (_locked || _sujet == null) return;
+    final BrevetQuestion q =
+        _sujet!.exercises[_exoIdx].questions[_questIdx];
+    final bool ok = idx == q.answerIndex;
+    _registerAnswer(ok, q, userChoiceIdx: idx);
+  }
+
+  void _registerAnswer(bool ok, BrevetQuestion q,
+      {double? userAnswerNum, int? userChoiceIdx}) {
     HapticFeedback.lightImpact();
     AudioService.instance.play(ok ? Sfx.correct : Sfx.wrong);
     setState(() {
       _locked = true;
       _wasCorrect = ok;
-      _userAnswer = v;
+      _userAnswer = userAnswerNum;
+      _userChoiceIdx = userChoiceIdx;
       if (ok) {
         _scoreByExo[_exoIdx] = (_scoreByExo[_exoIdx] ?? 0) + q.points;
         _correctQuestions++;
@@ -370,11 +389,9 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                     const SizedBox(height: 12),
                     _ResultBanner(
                       ok: _wasCorrect ?? false,
-                      userAnswer: _userAnswer == null
-                          ? '?'
-                          : _formatAnswer(_userAnswer!),
-                      expected: _formatAnswer(q.answer),
-                      unit: q.unit,
+                      userAnswer: _formatUserAnswer(q),
+                      expected: _formatExpected(q),
+                      unit: q.unit ?? '',
                       explanation: q.explanation,
                     ),
                   ],
@@ -383,62 +400,107 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: TextField(
-                  controller: _ctrl,
-                  focusNode: _focus,
-                  enabled: !_locked,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: true,
-                  ),
-                  textAlign: TextAlign.center,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _submit(),
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(r'[\-0-9.,]')),
-                  ],
-                  style: GoogleFonts.quicksand(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                    color: Bq.accentDeep,
-                  ),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Bq.cardBg,
-                    hintText: 'réponse${q.unit.isEmpty ? '' : ' (${q.unit})'}',
-                    hintStyle: GoogleFonts.quicksand(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Bq.textOnBg.withValues(alpha: 0.35),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 12),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              _ActionBtn(
-                label: _locked ? 'suivante →' : 'valider',
-                primary: true,
-                onTap: () {
-                  if (_locked) {
-                    _next();
-                  } else {
-                    _submit();
-                  }
-                },
-              ),
-            ],
-          ),
+          _buildAnswerArea(q),
         ],
       ),
+    );
+  }
+
+  String _formatUserAnswer(BrevetQuestion q) {
+    if (q.kind == BrevetQuestionKind.numerical) {
+      return _userAnswer == null ? '?' : _formatAnswer(_userAnswer!);
+    }
+    if (_userChoiceIdx == null) return '?';
+    return q.choices[_userChoiceIdx!];
+  }
+
+  String _formatExpected(BrevetQuestion q) {
+    if (q.kind == BrevetQuestionKind.numerical) {
+      return _formatAnswer(q.answer!);
+    }
+    return q.choices[q.answerIndex];
+  }
+
+  Widget _buildAnswerArea(BrevetQuestion q) {
+    if (q.kind == BrevetQuestionKind.numerical) {
+      return Row(
+        children: <Widget>[
+          Expanded(
+            child: TextField(
+              controller: _ctrl,
+              focusNode: _focus,
+              enabled: !_locked,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+                signed: true,
+              ),
+              textAlign: TextAlign.center,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _submitNumeric(),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[\-0-9.,]')),
+              ],
+              style: GoogleFonts.quicksand(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Bq.accentDeep,
+              ),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Bq.cardBg,
+                hintText:
+                    'réponse${q.unit == null || q.unit!.isEmpty ? '' : ' (${q.unit})'}',
+                hintStyle: GoogleFonts.quicksand(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Bq.textOnBg.withValues(alpha: 0.35),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 12),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          _ActionBtn(
+            label: _locked ? 'suivante →' : 'valider',
+            primary: true,
+            onTap: () {
+              if (_locked) {
+                _next();
+              } else {
+                _submitNumeric();
+              }
+            },
+          ),
+        ],
+      );
+    }
+    // QCM ou Vrai/Faux : boutons de choix
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        for (int i = 0; i < q.choices.length; i++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _ChoiceButton(
+              label: q.choices[i],
+              selected: _userChoiceIdx == i,
+              correct: _locked && i == q.answerIndex,
+              wrong: _locked && _userChoiceIdx == i && i != q.answerIndex,
+              onTap: _locked ? null : () => _submitChoice(i),
+            ),
+          ),
+        if (_locked)
+          _ActionBtn(
+            label: 'suivante →',
+            primary: true,
+            onTap: _next,
+          ),
+      ],
     );
   }
 
@@ -668,6 +730,41 @@ class _SujetTile extends StatelessWidget {
                           color: Bq.accent,
                         ),
                       ),
+                      if (sujet.source != null) ...<Widget>[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                '📎 ${sujet.source}',
+                                style: GoogleFonts.quicksand(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: Bq.textOnBg.withValues(alpha: 0.65),
+                                ),
+                              ),
+                            ),
+                            if (sujet.sourceUrl != null) ...<Widget>[
+                              const SizedBox(width: 6),
+                              GestureDetector(
+                                onTap: () async {
+                                  final Uri uri = Uri.parse(sujet.sourceUrl!);
+                                  await launchUrl(uri,
+                                      mode: LaunchMode.externalApplication);
+                                },
+                                child: Text(
+                                  '↗',
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: Bq.accent,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -813,6 +910,71 @@ class _ActionBtn extends StatelessWidget {
               fontWeight: FontWeight.w900,
               color: primary ? Colors.white : Bq.accent,
               letterSpacing: 0.8,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ChoiceButton extends StatelessWidget {
+  const _ChoiceButton({
+    required this.label,
+    required this.selected,
+    required this.correct,
+    required this.wrong,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final bool correct;
+  final bool wrong;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color bg;
+    final Color fg;
+    Color border = Bq.accent.withValues(alpha: 0.4);
+    if (correct) {
+      bg = AppColors.success;
+      fg = AppColors.successDark;
+      border = AppColors.successDark;
+    } else if (wrong) {
+      bg = AppColors.danger;
+      fg = Colors.white;
+      border = AppColors.danger;
+    } else if (selected) {
+      bg = Bq.accent;
+      fg = Colors.white;
+      border = Bq.accent;
+    } else {
+      bg = Bq.cardBg;
+      fg = Bq.textOnBg;
+    }
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: 1.5),
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.quicksand(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: fg,
+              height: 1.3,
             ),
           ),
         ),

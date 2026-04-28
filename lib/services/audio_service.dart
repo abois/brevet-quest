@@ -120,6 +120,15 @@ class AudioService extends ChangeNotifier {
     }
   }
 
+  /// Multiplicateur de volume par effet — atténue le son "wrong" qui
+  /// était plus fort que les autres.
+  double _volumeFactor(Sfx sfx) => switch (sfx) {
+        Sfx.wrong => 0.45,
+        Sfx.tap => 0.6,
+        Sfx.swipe => 0.7,
+        _ => 1.0,
+      };
+
   Future<void> play(Sfx sfx) async {
     if (_sfxMuted) return;
     final String path = sfx.assetPath;
@@ -128,7 +137,10 @@ class AudioService extends ChangeNotifier {
     _sfxCursor = (_sfxCursor + 1) % _sfxPool.length;
     try {
       await player.stop();
-      await player.play(AssetSource(path), volume: _sfxVolume);
+      await player.play(
+        AssetSource(path),
+        volume: (_sfxVolume * _volumeFactor(sfx)).clamp(0.0, 1.0),
+      );
     } catch (e) {
       _missingSfx.add(path);
       if (kDebugMode) {

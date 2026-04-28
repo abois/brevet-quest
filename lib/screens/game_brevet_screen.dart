@@ -589,7 +589,7 @@ class _GameBrevetScreenState extends State<GameBrevetScreen> {
                         onPressed: () async {
                           final Uri uri = Uri.parse(sujet.sourceUrl!);
                           await launchUrl(uri,
-                              mode: LaunchMode.externalApplication);
+                              mode: LaunchMode.inAppBrowserView);
                         },
                         icon: const Icon(Icons.picture_as_pdf, size: 16),
                         label: Text(
@@ -1162,7 +1162,7 @@ class _SujetTile extends StatelessWidget {
                                 onTap: () async {
                                   final Uri uri = Uri.parse(sujet.sourceUrl!);
                                   await launchUrl(uri,
-                                      mode: LaunchMode.externalApplication);
+                                      mode: LaunchMode.inAppBrowserView);
                                 },
                                 child: Text(
                                   '↗',

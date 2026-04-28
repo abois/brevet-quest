@@ -534,46 +534,39 @@ class BrevetSujets {
               'Adaptation des questions du sujet réel ; certaines sont en QCM '
               'pour évaluation auto, d\'autres en réponse libre avec auto-évaluation.',
           questions: <BrevetQuestion>[
-            BrevetQuestion.qcm(
+            BrevetQuestion.openEnded(
               prompt:
-                  '1. Pour quelle raison la narratrice arrive-t-elle à Marseille ?',
-              choices: <String>[
-                'Elle vient pour des vacances',
-                'Elle vient enseigner (premier poste de prof)',
-                'Elle suit son compagnon pour son travail',
-                'Elle vient soigner sa santé',
-              ],
-              answerIndex: 1,
+                  '1. Que vient faire la narratrice à Marseille ? Justifie ta réponse par DEUX citations du texte. (4 pts)',
+              modelAnswer:
+                  'La narratrice vient à Marseille pour prendre son premier poste d\'enseignante au lycée.\n\n'
+                  'Citations attendues :\n'
+                  '• « j\'aurais à faire quatorze heures de cours chaque semaine »\n'
+                  '• « j\'avais rendu visite à la directrice du lycée, mon emploi du temps était fixé ».',
               explanation:
-                  '« J\'aurais à faire quatorze heures de cours chaque semaine » : elle prend son poste d\'enseignante.',
+                  'Une réponse claire (« elle vient enseigner ») + 2 citations exactes courtes entre guillemets.',
               points: 4,
             ),
-            BrevetQuestion.qcm(
+            BrevetQuestion.openEnded(
               prompt:
-                  '2. (Lignes 1-4) Quel élément montre que la narratrice vit un moment important ?',
-              choices: <String>[
-                'Elle décrit longuement la météo du jour',
-                'Elle insiste sur l\'aspect inaugural et mémoriel de son arrivée',
-                'Elle précise l\'heure exacte d\'arrivée du train',
-                'Elle énumère ses bagages',
-              ],
-              answerIndex: 1,
+                  '2. (Lignes 1-4) À quoi voit-on que la narratrice vit un moment important de sa vie ? Donne DEUX éléments justifiés par des citations. (4 pts)',
+              modelAnswer:
+                  'Élément 1 : la narratrice présente ce moment comme un instant marquant rétrospectivement.\n'
+                  '  → « certains se sont rétrospectivement chargés d\'un sens si lourd qu\'ils émergent de mon passé avec l\'éclat des grands événements »\n\n'
+                  'Élément 2 : elle parle d\'un « tournant absolument neuf » dans son histoire.\n'
+                  '  → « Je me rappelle mon arrivée à Marseille comme si elle avait marqué dans mon histoire un tournant absolument neuf ».',
               explanation:
-                  'Le texte évoque un changement de vie marquant, que la narratrice mémorise.',
+                  'L\'idée est de mettre en évidence le caractère mémoriel et inaugural de l\'arrivée, avec deux citations distinctes.',
               points: 4,
             ),
-            BrevetQuestion.qcm(
+            BrevetQuestion.openEnded(
               prompt:
-                  '3. (Lignes 5-18) Qu\'est-ce qui fait dire qu\'« une vie nouvelle commence » ?',
-              choices: <String>[
-                'La narratrice est entourée de toute sa famille',
-                'Elle est seule, sans rien de préparé, et doit tout inventer',
-                'Elle a un emploi du temps déjà chargé d\'activités sociales',
-                'Elle s\'installe dans un appartement déjà meublé',
-              ],
-              answerIndex: 1,
+                  '3. (Lignes 5-18) Qu\'est-ce qui permet de dire qu\'une vie nouvelle commence pour elle ? Donne TROIS éléments, chacun appuyé sur une citation. (6 pts)',
+              modelAnswer:
+                  'Élément 1 — solitude / rupture avec le passé : « j\'étais là, seule, les mains vides, séparée de mon passé ».\n\n'
+                  'Élément 2 — rien n\'est préparé pour elle : « rien d\'autre n\'était prévu pour moi, pas même le lit où je dormirais ».\n\n'
+                  'Élément 3 — il lui faut tout inventer : « mes occupations, mes habitudes, mes plaisirs, c\'était à moi de les inventer ».',
               explanation:
-                  'Elle est « seule, les mains vides », « pas même le lit » de prêt — « c\'était à moi de les inventer ».',
+                  'Trois facettes du « renouveau » : isolement, absence de cadre, nécessité d\'inventer sa vie.',
               points: 6,
             ),
           ],
@@ -588,50 +581,50 @@ class BrevetSujets {
           imageCaption:
               'F. Bazille, La Robe rose, 1864 — Musée d\'Orsay, Paris',
           questions: <BrevetQuestion>[
-            BrevetQuestion.qcm(
+            BrevetQuestion.openEnded(
               prompt:
-                  '4. Comment l\'émerveillement pour Marseille se manifeste-t-il dans le texte ?',
-              choices: <String>[
-                'Par une énumération de plaintes et de regrets',
-                'Par des images sensorielles et un lexique enthousiaste',
-                'Par un refus de décrire la ville',
-                'Par des comparaisons avec Paris uniquement',
-              ],
-              answerIndex: 1,
+                  '4. Comment l\'émerveillement de la narratrice pour Marseille se manifeste-t-il ? Donne DEUX procédés d\'écriture identifiés ET analysés. (6 pts)',
+              modelAnswer:
+                  'Procédé 1 — Énumération sensorielle (verbes d\'action + sensations).\n'
+                  '  Citation : « je grimpai sur toutes ses rocailles, je rôdai dans toutes ses ruelles, je respirai le goudron et les oursins du Vieux-Port, je me mêlai aux foules de la Canebière ».\n'
+                  '  Effet : l\'accumulation traduit une exploration totale et ardente, mobilisant tous les sens.\n\n'
+                  'Procédé 2 — Hyperbole / métaphore amoureuse.\n'
+                  '  Citation : « J\'eus le coup de foudre ».\n'
+                  '  Effet : l\'expression empruntée au registre passionnel marque un émerveillement immédiat et puissant.',
               explanation:
-                  'Beauvoir mobilise des images positives, des impressions sensorielles : la ville est découverte avec enthousiasme.',
+                  'On attend deux procédés NOMMÉS + une CITATION + l\'EFFET produit.',
               points: 6,
-            ),
-            BrevetQuestion.qcm(
-              prompt:
-                  '5. Quels traits de caractère prêtez-vous à la narratrice ?',
-              choices: <String>[
-                'Timide, dépendante, peureuse',
-                'Indépendante, curieuse, courageuse',
-                'Frivole, indolente, distraite',
-                'Amère, hostile, méfiante',
-              ],
-              answerIndex: 1,
-              explanation:
-                  'Elle s\'installe seule, prend en main sa nouvelle vie, explore avec curiosité : indépendance, courage, curiosité.',
-              points: 6,
-            ),
-            BrevetQuestion.trueFalse(
-              prompt:
-                  '6. Le tableau de Bazille pourrait illustrer ce texte parce qu\'il met en scène une jeune femme contemplative ouverte sur un paysage extérieur.',
-              answer: true,
-              explanation:
-                  'Vrai : la pose, le regard porté au loin et l\'arrière-plan paysager font écho à l\'éveil de la narratrice à Marseille.',
-              points: 4,
             ),
             BrevetQuestion.openEnded(
               prompt:
-                  '6 bis. Justifie en quelques phrases en quoi le tableau peut illustrer le texte. Cite un élément du texte ET un détail de l\'image.',
+                  '5. Quels traits de caractère prêtes-tu à la narratrice ? Donne TROIS traits, chacun appuyé sur une citation. (6 pts)',
               modelAnswer:
-                  'Le tableau représente une jeune femme assise, regardant un paysage clair avec des arbres et un ciel ouvert. Cette posture contemplative et l\'ouverture vers l\'extérieur font écho à la narratrice qui, à Marseille, ouvre sa fenêtre sur la ville et s\'émerveille de sa nouveauté. La solitude paisible du tableau rejoint l\'expérience de solitude féconde décrite par Beauvoir (« seule, les mains vides »).',
+                  'Trait 1 — Indépendance / autonomie.\n'
+                  '  Citation : « c\'était à moi de les inventer » (mes occupations, mes plaisirs).\n\n'
+                  'Trait 2 — Courage face à l\'inconnu.\n'
+                  '  Citation : « J\'étais là, seule, les mains vides » — pourtant elle reste, descend l\'escalier, explore.\n\n'
+                  'Trait 3 — Curiosité / enthousiasme.\n'
+                  '  Citation : « Je partis à sa découverte » et « J\'eus le coup de foudre ».',
               explanation:
-                  'On attend une mise en relation : un trait de l\'image (pose, lumière, paysage) ↔ un trait du texte (émerveillement, solitude, ouverture).',
-              points: 4,
+                  'Trois traits cohérents (indépendance, courage, curiosité, optimisme…) chacun avec une citation distincte.',
+              points: 6,
+            ),
+            BrevetQuestion.openEnded(
+              prompt:
+                  '6. (Image) Ce tableau pourrait-il illustrer le texte ? Donne TROIS arguments, chacun référencé au texte ET à l\'image. (6 pts)',
+              modelAnswer:
+                  'Argument 1 — Solitude / contemplation.\n'
+                  '  Texte : « j\'étais là, seule, les mains vides ».\n'
+                  '  Image : la jeune femme est seule, dos tourné, plongée dans la contemplation.\n\n'
+                  'Argument 2 — Ouverture vers une ville inconnue.\n'
+                  '  Texte : « je regardais la grande cité inconnue où j\'allais […] tailler ma vie ».\n'
+                  '  Image : son regard se porte vers le village au loin, encadré par les arbres.\n\n'
+                  'Argument 3 — Lumière et chaleur du Sud.\n'
+                  '  Texte : « Sous le ciel bleu, des tuiles ensoleillées […] odeur d\'herbes brûlées ».\n'
+                  '  Image : tons chauds, lumière vive, ciel clair — atmosphère méridionale.',
+              explanation:
+                  'Trois arguments avec à chaque fois une mise en relation texte ↔ image.',
+              points: 6,
             ),
           ],
         ),
